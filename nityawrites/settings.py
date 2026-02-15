@@ -148,6 +148,13 @@ import cloudinary.uploader
 import cloudinary.api
 
 # Cloudinary configuration
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dtytwyk3x',
+    'API_KEY': '142833621568864',
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', 'your_api_secret')
+}
+
+# Legacy config for direct API usage if needed
 cloudinary.config( 
   cloud_name = "dtytwyk3x", 
   api_key = "142833621568864", 

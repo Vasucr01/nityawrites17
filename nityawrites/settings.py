@@ -149,15 +149,15 @@ import cloudinary.api
 
 # Cloudinary configuration
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'dtytwyk3x',
-    'API_KEY': '142833621568864',
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', 'your_cloud_name'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY', 'your_api_key'),
     'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', 'your_api_secret')
 }
 
 # Legacy config for direct API usage if needed
 cloudinary.config( 
-  cloud_name = "dtytwyk3x", 
-  api_key = "142833621568864", 
+  cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME', 'your_cloud_name'),
+  api_key = os.environ.get('CLOUDINARY_API_KEY', 'your_api_key'),
   api_secret = os.environ.get('CLOUDINARY_API_SECRET', 'your_api_secret')
 )
 

@@ -1,0 +1,44 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Shopping Cart - Nityawrites{% endblock %}
+
+{% block content %}
+<section class="order">
+  <h2>Your Shopping Cart</h2>
+  
+  {% if cart_items %}
+    <div style="max-width: 800px; margin: 0 auto;">
+      {% for item in cart_items %}
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; padding: 20px 0;">
+        <div style="flex: 1;">
+          <h3 style="margin: 0;">{{ item.title }}</h3>
+          <p style="color: #666; margin: 5px 0;">₹{{ item.price }} each</p>
+        </div>
+        
+        <div style="display: flex; align-items: center; gap: 20px;">
+          <form method="post" action="{% url 'cart_update' item.id %}" style="margin: 0;">
+            {% csrf_token %}
+            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="10" style="width: 60px; padding: 5px;">
+            <button type="submit" style="padding: 5px 15px; margin-left: 5px;">Update</button>
+          </form>
+          
+          <p style="margin: 0; font-weight: bold; min-width: 80px;">₹{{ item.total }}</p>
+          
+          <a href="{% url 'cart_remove' item.id %}" style="color: red; text-decoration: none; font-weight: bold;">✕ Remove</a>
+        </div>
+      </div>
+      {% endfor %}
+      
+      <div style="text-align: right; margin-top: 30px; padding-top: 20px; border-top: 2px solid #7a5c4d;">
+        <h2 style="margin: 10px 0;">Total: ₹{{ total }}</h2>
+        <a href="{% url 'checkout' %}" class="btn" style="margin-top: 20px; display: inline-block;">Proceed to Checkout</a>
+        <a href="{% url 'home' %}" class="btn" style="margin-top: 20px; display: inline-block; background: #5e4438; margin-left: 10px;">Continue Shopping</a>
+      </div>
+    </div>
+  {% else %}
+    <p>Your cart is empty!</p>
+    <a href="{% url 'home' %}" class="btn" style="margin-top: 20px; display: inline-block;">Browse Books</a>
+  {% endif %}
+</section>
+{% endblock %}

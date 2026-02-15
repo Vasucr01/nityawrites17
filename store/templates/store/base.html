@@ -1,0 +1,100 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Nityawrites - Online Bookstore{% endblock %}</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="{% static 'style.css' %}">
+  
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  
+  <!-- NAVIGATION BAR -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="{% url 'home' %}" class="nav-logo">
+        <span class="logo-icon">📚</span>
+        <span class="logo-text">Nityawrites</span>
+      </a>
+      
+      <ul class="nav-menu">
+        <li><a href="{% url 'home' %}">Home</a></li>
+        <li><a href="{% url 'home' %}#books">Books</a></li>
+        <li><a href="{% url 'home' %}#about">About</a></li>
+        <li><a href="{% url 'cart_detail' %}" class="nav-cart">
+          🛒 Cart
+          <span class="cart-badge" id="cart-count">0</span>
+        </a></li>
+      </ul>
+      
+      <div class="nav-toggle" id="nav-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </nav>
+
+  {% block content %}
+  {% endblock %}
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-section">
+        <h3>Nityawrites</h3>
+        <p>Stories that touch the heart, words that linger forever.</p>
+      </div>
+      
+      <div class="footer-section">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="{% url 'home' %}">Home</a></li>
+          <li><a href="{% url 'home' %}#books">Books</a></li>
+          <li><a href="{% url 'home' %}#about">About</a></li>
+          <li><a href="{% url 'cart_detail' %}">Cart</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h4>Connect</h4>
+        {% if social_links %}
+          <div class="footer-social">
+            {% for social in social_links %}
+              {% if social.platform == 'instagram' %}
+                <a href="{{ social.url }}" target="_blank" rel="noopener noreferrer" class="social-link">
+                  📷 Instagram
+                </a>
+              {% elif social.platform == 'facebook' %}
+                <a href="{{ social.url }}" target="_blank" rel="noopener noreferrer" class="social-link">
+                  📘 Facebook
+                </a>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+      
+      <div class="footer-section">
+        <h4>Contact</h4>
+        <p>Email: nityabhambhani17@gmail.com</p>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <p>© 2026 Nityawrites. All rights reserved.</p>
+      <p>Made with ❤️ for book lovers</p>
+    </div>
+  </footer>
+
+  <script src="{% static 'script.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

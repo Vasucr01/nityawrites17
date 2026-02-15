@@ -1,0 +1,80 @@
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: #faf8f6;
+  color: #333;
+}
+
+h1, h2 {
+  font-family: 'Cormorant Garamond', serif;
+}
+
+section {
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.hero {
+  background: linear-gradient(to bottom, #f5f1ed, #ffffff);
+}
+
+.tagline {
+  font-style: italic;
+  color: #7a5c4d;
+}
+
+.price {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 15px 0;
+}
+
+.btn {
+  display: inline-block;
+  padding: 12px 25px;
+  background: #7a5c4d;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+}
+
+form {
+  max-width: 400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+input, textarea, select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+button {
+  padding: 12px;
+  border: none;
+  background: #7a5c4d;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #5e4438;
+}
+
+.hidden {
+  display: none;
+}
+
+.qr-box {
+  width: 200px;
+  height: 200px;
+  border: 2px dashed #7a5c4d;
+  margin: 20px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

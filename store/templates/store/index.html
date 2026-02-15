@@ -1,0 +1,126 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Home - Nityawrites{% endblock %}
+
+{% block content %}
+<!-- HERO SECTION -->
+<section class="hero">
+  <div class="hero-content">
+    <h1>Nityawrites</h1>
+    <p class="tagline">Stories that touch the heart, words that linger forever</p>
+    <a href="#books" class="btn">Explore Books</a>
+  </div>
+</section>
+
+<!-- ABOUT SECTION -->
+{% if about %}
+<section class="about" id="about">
+  <div style="max-width: 1100px; margin: 0 auto;">
+    <h2>{{ about.title }}</h2>
+    
+    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 50px; align-items: center;">
+      {% if about.author_image %}
+      <div style="text-align: center;">
+        <img src="{{ about.author_image.url }}" alt="{{ about.title }}" 
+             style="width: 100%; max-width: 350px; border-radius: 20px; box-shadow: 0 10px 40px rgba(111, 78, 55, 0.3); border: 5px solid white;">
+      </div>
+      {% endif %}
+      
+      <div style="{% if not about.author_image %}grid-column: 1 / -1; text-align: center; max-width: 800px; margin: 0 auto;{% endif %}">
+        <p style="line-height: 1.9; font-size: 1.1rem; color: #4a4a4a; white-space: pre-line; text-align: {% if about.author_image %}left{% else %}center{% endif %};">{{ about.description }}</p>
+        
+        <!-- Social Media Links -->
+        {% if social_links %}
+        <div style="margin-top: 40px; text-align: {% if about.author_image %}left{% else %}center{% endif %};">
+          <p style="font-weight: 600; margin-bottom: 20px; color: var(--coffee-brown); font-size: 1.1rem;">Connect with me:</p>
+          <div style="display: flex; gap: 15px; {% if not about.author_image %}justify-content: center;{% endif %} flex-wrap: wrap;">
+            {% for social in social_links %}
+              {% if social.platform == 'instagram' %}
+                <a href="{{ social.url }}" target="_blank" rel="noopener noreferrer" 
+                   style="display: inline-flex; align-items: center; gap: 10px; padding: 12px 25px; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color: white; text-decoration: none; border-radius: 30px; font-weight: 500; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(220, 39, 67, 0.3);"
+                   onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 25px rgba(220, 39, 67, 0.4)';"
+                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(220, 39, 67, 0.3)';">
+                  <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                  </svg>
+                  Instagram
+                </a>
+              {% elif social.platform == 'facebook' %}
+                <a href="{{ social.url }}" target="_blank" rel="noopener noreferrer" 
+                   style="display: inline-flex; align-items: center; gap: 10px; padding: 12px 25px; background: #1877f2; color: white; text-decoration: none; border-radius: 30px; font-weight: 500; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(24, 119, 242, 0.3);">
+                  Facebook
+                </a>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Decorative Divider -->
+<div class="decorative-divider">✦ ✦ ✦</div>
+{% endif %}
+
+<!-- BOOKS SECTION -->
+<section id="books" style="background: var(--paper-white);">
+  <h2>Available Books</h2>
+  
+  {% if books %}
+    <div class="book-grid">
+      {% for book in books %}
+      <div class="book-card">
+        <div class="book-image-wrapper">
+          {% if book.image %}
+            <img src="{{ book.image.url }}" alt="{{ book.title }}">
+          {% else %}
+            <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--beige), var(--nude)); color: var(--coffee-brown); font-size: 3rem;">
+              📚
+            </div>
+          {% endif %}
+        </div>
+        
+        <div class="book-content">
+          <h3>{{ book.title }}</h3>
+          <p class="book-author">by {{ book.author }}</p>
+          <p class="book-description">{{ book.description|truncatewords:20 }}</p>
+          <p class="book-price">₹{{ book.price }}</p>
+          
+          {% if book.stock > 0 %}
+            <div class="book-actions">
+              <a href="{% url 'cart_add' book.pk %}" class="btn">Add to Cart</a>
+              <a href="{% url 'book_detail' book.pk %}" class="btn btn-secondary">Details</a>
+            </div>
+          {% else %}
+            <p style="color: #d32f2f; font-weight: bold; text-align: center; padding: 10px; background: #ffebee; border-radius: 8px;">Out of Stock</p>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div style="text-align: center; padding: 60px 20px; background: white; border-radius: 20px; max-width: 600px; margin: 0 auto; box-shadow: 0 8px 30px rgba(111, 78, 55, 0.15);">
+      <p style="font-size: 1.2rem; color: var(--mocha); margin-bottom: 20px;">📚 No books available at the moment.</p>
+      <p style="color: #666;">Please check back later for new releases!</p>
+    </div>
+  {% endif %}
+</section>
+
+<!-- Decorative Divider -->
+<div class="decorative-divider">✦ ✦ ✦</div>
+
+<!-- Newsletter Section (Optional) -->
+<section style="background: linear-gradient(135deg, var(--cream), var(--beige)); text-align: center;">
+  <h2>Stay Updated</h2>
+  <p style="max-width: 600px; margin: 0 auto 30px; font-size: 1.1rem; color: var(--mocha);">
+    Subscribe to receive updates about new book releases and exclusive content.
+  </p>
+  <form method="post" style="max-width: 500px; margin: 0 auto; flex-direction: row; padding: 20px;">
+    <input type="email" placeholder="Enter your email" required style="flex: 1; margin-right: 10px;">
+    <button type="submit">Subscribe</button>
+  </form>
+</section>
+{% endblock %}

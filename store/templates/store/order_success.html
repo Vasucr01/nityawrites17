@@ -1,0 +1,38 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Order Success - Nityawrites{% endblock %}
+
+{% block content %}
+<section class="order">
+  <div style="max-width: 600px; margin: 0 auto; text-align: center; padding: 40px;">
+    <div style="font-size: 80px; margin-bottom: 20px;">✅</div>
+    <h2 style="color: #28a745;">Order Placed Successfully!</h2>
+    
+    <div style="background: #f9f9f9; padding: 30px; border-radius: 10px; margin: 30px 0; text-align: left;">
+      <h3>Order Details</h3>
+      <p><strong>Order ID:</strong> {{ order.order_id }}</p>
+      <p><strong>Customer Name:</strong> {{ order.customer_name }}</p>
+      <p><strong>Email:</strong> {{ order.email }}</p>
+      <p><strong>Phone:</strong> {{ order.phone }}</p>
+      <p><strong>Total Amount:</strong> ₹{{ order.total_amount }}</p>
+      <p><strong>Payment Status:</strong> <span style="color: #28a745; font-weight: bold;">{{ order.payment_status|upper }}</span></p>
+      
+      <h4 style="margin-top: 20px;">Delivery Address:</h4>
+      <p>{{ order.address_line1 }}<br>
+      {% if order.address_line2 %}{{ order.address_line2 }}<br>{% endif %}
+      {{ order.city }}, {{ order.state }} - {{ order.pincode }}<br>
+      {{ order.country }}</p>
+      
+      <h4 style="margin-top: 20px;">Items Ordered:</h4>
+      {% for item in order.items.all %}
+      <p>{{ item.book.title }} - Quantity: {{ item.quantity }} - ₹{{ item.price }}</p>
+      {% endfor %}
+    </div>
+    
+    <p style="color: #666; margin: 20px 0;">Thank you for your purchase! You will receive a confirmation email shortly.</p>
+    
+    <a href="{% url 'home' %}" class="btn">Continue Shopping</a>
+  </div>
+</section>
+{% endblock %}

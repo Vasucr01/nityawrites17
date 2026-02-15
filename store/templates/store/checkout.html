@@ -1,0 +1,47 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Checkout - Nityawrites{% endblock %}
+
+{% block content %}
+<section class="order" id="order">
+  <h2>Checkout</h2>
+  
+  <!-- Order Summary -->
+  <div style="max-width: 600px; margin: 0 auto 40px; padding: 20px; background: #f9f9f9; border-radius: 10px;">
+    <h3>Order Summary</h3>
+    {% for item in cart_items %}
+    <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #ddd;">
+      <span>{{ item.title }} (x{{ item.quantity }})</span>
+      <span>₹{{ item.total }}</span>
+    </div>
+    {% endfor %}
+    <div style="display: flex; justify-content: space-between; padding: 15px 0; font-weight: bold; font-size: 18px;">
+      <span>Total:</span>
+      <span>₹{{ total }}</span>
+    </div>
+  </div>
+
+  <!-- Checkout Form -->
+  <form method="post" action="{% url 'payment_process' %}">
+    {% csrf_token %}
+    
+    <h3>Customer Details</h3>
+    <input type="text" name="name" placeholder="Full Name" required>
+    <input type="email" name="email" placeholder="Email" required>
+    <input type="tel" name="phone" placeholder="Phone Number" required>
+    
+    <h3 style="margin-top: 30px;">Delivery Address</h3>
+    <input type="text" name="address1" placeholder="Address Line 1" required>
+    <input type="text" name="address2" placeholder="Address Line 2 (Optional)">
+    <input type="text" name="city" placeholder="City" required>
+    <input type="text" name="state" placeholder="State" required>
+    <input type="text" name="pincode" placeholder="Pincode" required>
+    <input type="text" name="country" placeholder="Country" value="India" required>
+
+    <button type="submit">Proceed to Payment</button>
+  </form>
+  
+  <a href="{% url 'cart_detail' %}" class="btn" style="margin-top: 20px; display: inline-block; background: #5e4438;">← Back to Cart</a>
+</section>
+{% endblock %}

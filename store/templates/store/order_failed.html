@@ -1,0 +1,20 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Payment Failed - Nityawrites{% endblock %}
+
+{% block content %}
+<section class="order">
+  <div style="max-width: 600px; margin: 0 auto; text-align: center; padding: 40px;">
+    <div style="font-size: 80px; margin-bottom: 20px;">❌</div>
+    <h2 style="color: #dc3545;">Payment Failed</h2>
+    
+    <p style="color: #666; margin: 30px 0; font-size: 18px;">
+      Unfortunately, your payment could not be processed. Please try again.
+    </p>
+    
+    <a href="{% url 'checkout' %}" class="btn">Try Again</a>
+    <a href="{% url 'home' %}" class="btn" style="background: #5e4438; margin-left: 10px;">Back to Home</a>
+  </div>
+</section>
+{% endblock %}

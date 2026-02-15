@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Whispered Pages</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>The Story We Kept Writing</h1>
+
+      <p class="price">₹279</p>
+      <a href="#order" class="btn">Order Now</a>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="about">
+    <h2>About The Book</h2>
+    <p>
+      Some love stories are'nt loud. They live in letters, in pauses, in the spaces between words
+      "The Story We Kept Writing" is about two souls who chose each other, even when time did'nt.
+    </p>
+  </section>
+
+  <!-- ORDER FORM -->
+  <section class="order" id="order">
+    <h2>Place Your Order</h2>
+
+    <form id="orderForm">
+      <input type="text" placeholder="Full Name" required>
+      <input type="email" placeholder="Email" required>
+      <input type="tel" placeholder="Phone Number" required>
+      <input type="text" placeholder="Full Address" required>
+      <input type="text" placeholder="City" required>
+      <input type="text" placeholder="Pincode" required>
+      <input type="number" placeholder="Quantity" min="1" value="1" required>
+
+      <button type="submit">Submit Order</button>
+    </form>
+
+    <div id="successMessage" class="hidden">
+      ✅ Order received! Please complete payment below.
+    </div>
+  </section>
+
+  <!-- PAYMENT -->
+  <section class="payment">
+    <h2>Scan & Pay</h2>
+    <div class="qr-box">
+      <p>📱 Your UPI QR Code Here</p>
+    </div>
+    <p>After payment, send screenshot on WhatsApp.</p>
+  </section>
+
+   <!-- REVIEWS -->
+  <section class="reviews">
+    <h2>What Readers Say</h2>
+
+    <div id="reviewList"></div>
+
+    <form id="reviewForm">
+      <input type="text" id="reviewName" placeholder="Your Name" required>
+      <textarea id="reviewText" placeholder="Write your review..." required></textarea>
+      <select id="reviewRating" required>
+        <option value="">Rating</option>
+        <option value="5">⭐⭐⭐⭐⭐</option>
+        <option value="4">⭐⭐⭐⭐</option>
+        <option value="3">⭐⭐⭐</option>
+        <option value="2">⭐⭐</option>
+        <option value="1">⭐</option>
+      </select>
+      <button type="submit">Submit Review</button>
+    </form>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2026 The Story We Kept Writing </p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

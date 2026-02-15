@@ -133,22 +133,33 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles_build' / 'static'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Email settings
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'your_email@gmail.com'  # Replace with your email
-EMAIL_HOST_PASSWORD = 'your_app_password'  # Replace with your Gmail app password
-DEFAULT_FROM_EMAIL = 'Nityawrites <your_email@gmail.com>'
+INSTALLED_APPS += [
+    'cloudinary_storage',
+    'cloudinary',
+]
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# Cloudinary configuration
+cloudinary.config( 
+  cloud_name = "dtytwyk3x", 
+  api_key = "142833621568864", 
+  api_secret = os.environ.get('CLOUDINARY_API_SECRET', 'your_api_secret')
+)
+
+STORAGES = {
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+

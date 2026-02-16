@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
 from django.http import JsonResponse, HttpResponse
 from django.core.management import call_command
 from django.views.decorators.csrf import csrf_exempt
@@ -296,81 +297,79 @@ def payment_callback(request):
 
 def send_order_confirmation_email(order):
     """Send order confirmation email to customer"""
-    try:
-        # Prepare email content
-        subject = f'Order Confirmation - Nityawrites.com 📚 (Order #{order.order_id})'
-        
-        # Get order items
-        items_list = []
-        for item in order.items.all():
-            items_list.append(f"{item.book.title} x {item.quantity} - ₹{item.price}")
-        
-        # Create email body
-        html_message = f"""
-        <html>
-        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-            <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
-                <h2 style="color: #7a5c4d; text-align: center;">Thank You for Your Order! 📚</h2>
-                
-                <p>Dear {order.customer_name},</p>
-                
-                <p>We're delighted to confirm your order from <strong>Nityawrites</strong>!</p>
-                
-                <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin: 20px 0;">
-                    <h3 style="color: #7a5c4d; margin-top: 0;">Order Details</h3>
-                    <p><strong>Order ID:</strong> {order.order_id}</p>
-                    <p><strong>Order Date:</strong> {order.created_at.strftime('%B %d, %Y at %I:%M %p')}</p>
-                    <p><strong>UPI Transaction ID:</strong> {order.payment.upi_transaction_id}</p>
-                </div>
-                
-                <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin: 20px 0;">
-                    <h3 style="color: #7a5c4d; margin-top: 0;">Books Ordered</h3>
-                    <ul style="list-style: none; padding: 0;">
-                        {''.join([f'<li style="padding: 5px 0; border-bottom: 1px solid #ddd;">{item}</li>' for item in items_list])}
-                    </ul>
-                    <p style="font-size: 18px; font-weight: bold; margin-top: 15px;">Total Amount: ₹{order.total_amount}</p>
-                </div>
-                
-                <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin: 20px 0;">
-                    <h3 style="color: #7a5c4d; margin-top: 0;">Delivery Address</h3>
-                    <p>
-                        {order.customer_name}<br>
-                        {order.address_line1}<br>
-                        {order.address_line2 + '<br>' if order.address_line2 else ''}
-                        {order.city}, {order.state} - {order.pincode}<br>
-                        {order.country}<br>
-                        <strong>Phone:</strong> {order.phone}
-                    </p>
-                </div>
-                
-                <div style="background: #7a5c4d; color: white; padding: 20px; border-radius: 8px; text-align: center; margin: 20px 0;">
-                    <p style="margin: 0; font-size: 16px;">
-                        <strong>Thank you for ordering from Nityawrites.</strong><br>
-                        Your support means the world to independent authors.<br>
-                        Happy Reading 📖✨
-                    </p>
-                </div>
-                
-                <p style="text-align: center; color: #666; font-size: 12px; margin-top: 30px;">
-                    © 2026 Nityawrites. All rights reserved.
+    # Prepare email content
+    subject = f'Order Confirmation - Nityawrites.com 📚 (Order #{order.order_id})'
+    
+    # Get order items
+    items_list = []
+    for item in order.items.all():
+        items_list.append(f"{item.book.title} x {item.quantity} - ₹{item.price}")
+    
+    # Create email body
+    html_message = f"""
+    <html>
+    <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+        <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+            <h2 style="color: #7a5c4d; text-align: center;">Thank You for Your Order! 📚</h2>
+            
+            <p>Dear {order.customer_name},</p>
+            
+            <p>We're delighted to confirm your order from <strong>Nityawrites</strong>!</p>
+            
+            <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                <h3 style="color: #7a5c4d; margin-top: 0;">Order Details</h3>
+                <p><strong>Order ID:</strong> {order.order_id}</p>
+                <p><strong>Order Date:</strong> {order.created_at.strftime('%B %d, %Y at %I:%M %p')}</p>
+                <p><strong>UPI Transaction ID:</strong> {order.payment.upi_transaction_id}</p>
+            </div>
+            
+            <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                <h3 style="color: #7a5c4d; margin-top: 0;">Books Ordered</h3>
+                <ul style="list-style: none; padding: 0;">
+                    {''.join([f'<li style="padding: 5px 0; border-bottom: 1px solid #ddd;">{item}</li>' for item in items_list])}
+                </ul>
+                <p style="font-size: 18px; font-weight: bold; margin-top: 15px;">Total Amount: ₹{order.total_amount}</p>
+            </div>
+            
+            <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                <h3 style="color: #7a5c4d; margin-top: 0;">Delivery Address</h3>
+                <p>
+                    {order.customer_name}<br>
+                    {order.address_line1}<br>
+                    {order.address_line2 + '<br>' if order.address_line2 else ''}
+                    {order.city}, {order.state} - {order.pincode}<br>
+                    {order.country}<br>
+                    <strong>Phone:</strong> {order.phone}
                 </p>
             </div>
-        </body>
-        </html>
-        """
-        
-        plain_message = strip_tags(html_message)
-        
-        send_mail(
-            subject=subject,
-            message=plain_message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[order.email],
-            html_message=html_message,
-            fail_silently=False,
-        )
-    except Exception as e:
-        print(f"Error sending email: {e}")
+            
+            <div style="background: #7a5c4d; color: white; padding: 20px; border-radius: 8px; text-align: center; margin: 20px 0;">
+                <p style="margin: 0; font-size: 16px;">
+                    <strong>Thank you for ordering from Nityawrites.</strong><br>
+                    Your support means the world to independent authors.<br>
+                    Happy Reading 📖✨
+                </p>
+            </div>
+            
+            <p style="text-align: center; color: #666; font-size: 12px; margin-top: 30px;">
+                © 2026 Nityawrites. All rights reserved.
+            </p>
+        </div>
+    </body>
+    </html>
+    """
+    
+    plain_message = strip_tags(html_message)
+    
+    # Remove silent try/except to allow errors to reach the admin caller
+    send_mail(
+        subject=subject,
+        message=plain_message,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[order.email],
+        html_message=html_message,
+        fail_silently=False,
+    )
 
 
 def order_success(request, order_id):
@@ -430,8 +429,9 @@ def admin_order_verify(request, pk):
     # Send email
     try:
         send_order_confirmation_email(order)
+        messages.success(request, f"Order #{order.order_id} verified and confirmation email sent to {order.email}!")
     except Exception as e:
-        print(f"Error sending email: {e}")
+        messages.error(request, f"Order #{order.order_id} verified, but FAILED to send email: {str(e)}")
         
     return redirect('/admin/store/order/')
 

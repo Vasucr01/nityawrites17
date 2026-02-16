@@ -454,12 +454,21 @@ def admin_order_fail(request, pk):
 
 
 def test_email_view(request):
-    """Deep debug for email with optional order ID"""
+    """Deep debug for email with optional order ID and order listing"""
     if not request.user.is_staff:
-        return HttpResponse("Unauthorized", status=403)
+        return HttpResponse("Unauthorized - Please login to admin first", status=403)
     
+    from django.utils import timezone
     order_id = request.GET.get('order_id')
     try:
+        if order_id == 'list':
+            orders = Order.objects.all().order_by('-created_at')[:10]
+            output = "<h2>Recent Orders</h2><ul>"
+            for o in orders:
+                output += f"<li>ID: {o.order_id} | Email: {o.email} | Status: {o.payment_status} | Created: {o.created_at}</li>"
+            output += "</ul><p>Use ?order_id=ID to test a specific order.</p>"
+            return HttpResponse(output)
+        
         if order_id:
             order = get_object_or_404(Order, order_id=order_id)
             send_order_confirmation_email(order)
@@ -467,7 +476,7 @@ def test_email_view(request):
         else:
             send_mail(
                 'Simple Test Email',
-                'SMTP is working! 📚✨',
+                f'SMTP is working! Checked at {timezone.now()} 📚✨',
                 settings.DEFAULT_FROM_EMAIL,
                 [settings.DEFAULT_FROM_EMAIL],
                 fail_silently=False,

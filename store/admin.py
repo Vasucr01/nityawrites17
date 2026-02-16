@@ -69,13 +69,23 @@ export_orders_to_excel.short_description = "Export to Excel"
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ['order_id', 'customer_name', 'phone', 'total_amount', 'payment_status', 'created_at']
+    list_display = ['order_id', 'customer_name', 'phone', 'total_amount', 'payment_status', 'quick_actions', 'created_at']
     list_filter = ['payment_status', 'created_at']
     search_fields = ['order_id', 'customer_name', 'email', 'phone']
-    readonly_fields = ['order_id', 'created_at']
+    readonly_fields = ['order_id', 'created_at', 'quick_actions']
     list_editable = ['payment_status']
     inlines = [OrderItemInline]
     actions = [export_orders_to_excel, 'mark_as_verified', 'mark_as_failed']
+
+    def quick_actions(self, obj):
+        from django.utils.safestring import mark_safe
+        verify_url = f"/admin/store/order_verify/{obj.pk}/"
+        fail_url = f"/admin/store/order_fail/{obj.pk}/"
+        return mark_safe(f"""
+            <a class="button" href="{verify_url}" style="background: #28a745; color: white; padding: 5px 10px; border-radius: 4px; text-decoration: none; margin-right: 5px; font-size: 11px;">✅ Verify</a>
+            <a class="button" href="{fail_url}" style="background: #dc3545; color: white; padding: 5px 10px; border-radius: 4px; text-decoration: none; font-size: 11px;">❌ Fail</a>
+        """)
+    quick_actions.short_description = 'Quick Actions'
 
     def mark_as_verified(self, request, queryset):
         from .views import send_order_confirmation_email
@@ -120,10 +130,10 @@ class OrderItemAdmin(admin.ModelAdmin):
 
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
-    list_display = ['order', 'payment_reference', 'amount', 'status', 'created_at', 'has_screenshot']
+    list_display = ['order', 'payment_reference', 'amount', 'status', 'quick_actions', 'created_at', 'has_screenshot']
     list_filter = ['status', 'created_at']
     search_fields = ['upi_transaction_id', 'payment_reference', 'order__order_id']
-    readonly_fields = ['created_at', 'screenshot_preview']
+    readonly_fields = ['created_at', 'screenshot_preview', 'quick_actions']
     list_editable = ['status']
     fields = ['order', 'upi_transaction_id', 'payment_reference', 'amount', 'status', 'created_at', 'verified_at', 'screenshot_preview', 'payment_screenshot']
     actions = ['mark_as_verified', 'mark_as_failed']

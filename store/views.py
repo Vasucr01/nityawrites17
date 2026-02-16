@@ -408,3 +408,47 @@ def force_migrate(request):
         return HttpResponse(f"Migration tool finished.<br><pre>{output.getvalue()}</pre>")
     except Exception as e:
         return HttpResponse(f"Migration tool fatal error: {str(e)}", status=500)
+
+
+def admin_order_verify(request, pk):
+    """Quick verify view for admin"""
+    if not request.user.is_staff:
+        return HttpResponse("Unauthorized", status=403)
+    
+    from django.utils import timezone
+    order = get_object_or_404(Order, pk=pk)
+    order.payment_status = 'verified'
+    order.save()
+    
+    # Update payment
+    payment = getattr(order, 'payment', None)
+    if payment:
+        payment.status = 'verified'
+        payment.verified_at = timezone.now()
+        payment.save()
+        
+    # Send email
+    try:
+        send_order_confirmation_email(order)
+    except Exception as e:
+        print(f"Error sending email: {e}")
+        
+    return redirect('/admin/store/order/')
+
+
+def admin_order_fail(request, pk):
+    """Quick fail view for admin"""
+    if not request.user.is_staff:
+        return HttpResponse("Unauthorized", status=403)
+    
+    order = get_object_or_404(Order, pk=pk)
+    order.payment_status = 'failed'
+    order.save()
+    
+    # Update payment
+    payment = getattr(order, 'payment', None)
+    if payment:
+        payment.status = 'failed'
+        payment.save()
+        
+    return redirect('/admin/store/order/')

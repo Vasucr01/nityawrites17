@@ -193,14 +193,13 @@ def payment_process(request):
         amount = "{:.2f}".format(total)
         note = f'Order {order.order_id}'
         
-        # Construct UPI link with transaction reference (tr) for better compatibility
+        # Construct Simplified UPI link (Basic params only to maximize compatibility)
+        # removing tr/tn keys which sometimes cause validation errors in specific apps
         upi_params = {
             'pa': upi_id,
             'pn': payee_name,
             'am': amount,
-            'cu': 'INR',
-            'tn': note,
-            'tr': order.order_id  # Transaction reference is crucial for some apps
+            'cu': 'INR'
         }
         
         query_string = '&'.join([f"{key}={quote(str(value))}" for key, value in upi_params.items()])

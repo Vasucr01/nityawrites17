@@ -564,8 +564,10 @@ body {
   }
 
   .book-grid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    /* Reduced from 250px to fit small screens */
+    gap: 15px;
+    /* Reduced gap */
   }
 
   section h2 {

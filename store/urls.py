@@ -17,5 +17,4 @@ urlpatterns = [
     path('force-migrate/', views.force_migrate, name='force_migrate'),
     path('manage-order/verify/<int:pk>/', views.admin_order_verify, name='admin_order_verify'),
     path('manage-order/fail/<int:pk>/', views.admin_order_fail, name='admin_order_fail'),
-    path('test-email/', views.test_email_view, name='test_email'),
 ]

@@ -4,7 +4,7 @@ from django.http import JsonResponse, HttpResponse
 from django.core.management import call_command
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
-from django.core.mail import EmailMessage
+from django.core.mail import send_mail
 from django.utils.html import strip_tags
 from .models import Book, Order, OrderItem, Payment, AboutSection, SocialMedia
 import uuid
@@ -360,18 +360,15 @@ def send_order_confirmation_email(order):
     
     plain_message = strip_tags(html_message)
     
-    # Use EmailMessage for more control (BCC, etc)
-    email = EmailMessage(
+    # Use send_mail (proven to work in test)
+    send_mail(
         subject=subject,
-        body=html_message,
+        message=plain_message,
         from_email=settings.DEFAULT_FROM_EMAIL,
-        to=[order.email],
-        bcc=[settings.DEFAULT_FROM_EMAIL], # BCC the owner for tracking
+        recipient_list=[order.email, settings.DEFAULT_FROM_EMAIL], # BCC equivalent by adding to recipient list
+        html_message=html_message,
+        fail_silently=False,
     )
-    email.content_subtype = "html" # Main content is now HTML
-    
-    # Send email (fail_silently=False ensures error propagates to admin)
-    email.send(fail_silently=False)
 
 
 def order_success(request, order_id):
@@ -454,3 +451,28 @@ def admin_order_fail(request, pk):
         payment.save()
         
     return redirect('/admin/store/order/')
+
+
+def test_email_view(request):
+    """Deep debug for email with optional order ID"""
+    if not request.user.is_staff:
+        return HttpResponse("Unauthorized", status=403)
+    
+    order_id = request.GET.get('order_id')
+    try:
+        if order_id:
+            order = get_object_or_404(Order, order_id=order_id)
+            send_order_confirmation_email(order)
+            return HttpResponse(f"REAL Order Confirmation sent for {order_id} to {order.email} (and BCC to owner)!")
+        else:
+            send_mail(
+                'Simple Test Email',
+                'SMTP is working! 📚✨',
+                settings.DEFAULT_FROM_EMAIL,
+                [settings.DEFAULT_FROM_EMAIL],
+                fail_silently=False,
+            )
+            return HttpResponse(f"Simple Test Email sent to {settings.DEFAULT_FROM_EMAIL}!")
+    except Exception as e:
+        import traceback
+        return HttpResponse(f"DEBUG FAILED: {str(e)}<br><pre>{traceback.format_exc()}</pre>")

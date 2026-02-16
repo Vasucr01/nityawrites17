@@ -87,10 +87,30 @@ class OrderAdmin(admin.ModelAdmin):
         """)
     quick_actions.short_description = 'Quick Actions'
 
+    def resend_confirmation_email(self, request, queryset):
+        """Action to resend confirmation emails for selected orders"""
+        from .views import send_order_confirmation_email
+        count = 0
+        errors = []
+        for order in queryset:
+            try:
+                send_order_confirmation_email(order)
+                count += 1
+            except Exception as e:
+                errors.append(f"#{order.order_id}: {str(e)}")
+        
+        if count:
+            self.message_user(request, f"Successfully resent {count} confirmation email(s).")
+        if errors:
+            self.message_user(request, f"Failed to send {len(errors)} email(s): {', '.join(errors)}", level='ERROR')
+    resend_confirmation_email.short_description = "📧 Resend Confirmation Email"
+
     def mark_as_verified(self, request, queryset):
+        """Action to mark orders as verified and send emails"""
         from .views import send_order_confirmation_email
         from django.utils import timezone
         count = 0
+        errors = []
         for order in queryset:
             order.payment_status = 'verified'
             order.save()
@@ -104,12 +124,17 @@ class OrderAdmin(admin.ModelAdmin):
             # Send email
             try:
                 send_order_confirmation_email(order)
+                count += 1
             except Exception as e:
-                self.message_user(request, f"Error sending email for {order.order_id}: {e}", level='Warning')
-            
-            count += 1
-        self.message_user(request, f'{count} order(s) marked as verified and emails sent.')
+                errors.append(f"#{order.order_id}: {str(e)}")
+        
+        if count:
+            self.message_user(request, f"Successfully verified {count} order(s) and sent emails.")
+        if errors:
+            self.message_user(request, f"Verified orders, but failed to send {len(errors)} email(s): {', '.join(errors)}", level='ERROR')
     mark_as_verified.short_description = "✅ Mark as Verified & Send Email"
+
+    actions = ['mark_as_verified', 'mark_as_failed', 'export_to_excel', 'resend_confirmation_email']
 
     def mark_as_failed(self, request, queryset):
         count = queryset.update(payment_status='failed')
@@ -136,7 +161,25 @@ class PaymentAdmin(admin.ModelAdmin):
     readonly_fields = ['created_at', 'screenshot_preview', 'quick_actions']
     list_editable = ['status']
     fields = ['order', 'upi_transaction_id', 'payment_reference', 'amount', 'status', 'created_at', 'verified_at', 'screenshot_preview', 'payment_screenshot']
-    actions = ['mark_as_verified', 'mark_as_failed']
+    def resend_confirmation_email(self, request, queryset):
+        """Resend email from payment admin"""
+        from .views import send_order_confirmation_email
+        count = 0
+        errors = []
+        for payment in queryset:
+            try:
+                send_order_confirmation_email(payment.order)
+                count += 1
+            except Exception as e:
+                errors.append(f"#{payment.order.order_id}: {str(e)}")
+        
+        if count:
+            self.message_user(request, f"Successfully resent {count} confirmation email(s).")
+        if errors:
+            self.message_user(request, f"Failed to send {len(errors)} email(s): {', '.join(errors)}", level='ERROR')
+    resend_confirmation_email.short_description = "📧 Resend Confirmation Email"
+
+    actions = ['mark_as_verified', 'mark_as_failed', 'resend_confirmation_email']
     
     def has_screenshot(self, obj):
         """Show if payment has screenshot"""

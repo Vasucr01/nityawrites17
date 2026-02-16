@@ -4,8 +4,7 @@ from django.http import JsonResponse, HttpResponse
 from django.core.management import call_command
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
-from django.core.mail import send_mail
-from django.template.loader import render_to_string
+from django.core.mail import EmailMessage
 from django.utils.html import strip_tags
 from .models import Book, Order, OrderItem, Payment, AboutSection, SocialMedia
 import uuid
@@ -361,15 +360,18 @@ def send_order_confirmation_email(order):
     
     plain_message = strip_tags(html_message)
     
-    # Remove silent try/except to allow errors to reach the admin caller
-    send_mail(
+    # Use EmailMessage for more control (BCC, etc)
+    email = EmailMessage(
         subject=subject,
-        message=plain_message,
+        body=html_message,
         from_email=settings.DEFAULT_FROM_EMAIL,
-        recipient_list=[order.email],
-        html_message=html_message,
-        fail_silently=False,
+        to=[order.email],
+        bcc=[settings.DEFAULT_FROM_EMAIL], # BCC the owner for tracking
     )
+    email.content_subtype = "html" # Main content is now HTML
+    
+    # Send email (fail_silently=False ensures error propagates to admin)
+    email.send(fail_silently=False)
 
 
 def order_success(request, order_id):

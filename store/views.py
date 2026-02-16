@@ -454,9 +454,6 @@ def admin_order_fail(request, pk):
     return redirect('/admin/store/order/')
 def test_email_view(request):
     """View to test if SMTP is working"""
-    if not request.user.is_staff:
-        return HttpResponse("Unauthorized", status=403)
-    
     test_email = request.GET.get('email', settings.EMAIL_HOST_USER)
     try:
         send_mail(

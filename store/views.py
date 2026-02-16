@@ -190,11 +190,29 @@ def payment_process(request):
         
         # Simple context for manual payment
         upi_id = settings.UPI_ID
+        payee_name = 'Nitya'
+        amount_formatted = "{:.2f}".format(total)
+        
+        # UPI string for QR code
+        upi_string = f"upi://pay?pa={upi_id}&pn={payee_name}&am={amount_formatted}&cu=INR"
+        
+        # Generate QR code
+        import qrcode
+        import io
+        import base64
+        
+        qr_img = qrcode.make(upi_string)
+        buffer = io.BytesIO()
+        qr_img.save(buffer, format='PNG')
+        buffer.seek(0)
+        qr_code_base64 = base64.b64encode(buffer.getvalue()).decode()
         
         context = {
             'order': order,
             'total': total,
-            'upi_id_debug': upi_id
+            'upi_id_debug': upi_id,
+            'qr_code': qr_code_base64,
+            'upi_link': upi_string
         }
         
         return render(request, 'store/payment.html', context)

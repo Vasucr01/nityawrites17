@@ -40,7 +40,14 @@
 
     <!-- UPI Payment Details -->
     <div style="text-align: center; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 25px;">
-      <h3 style="color: var(--coffee-brown); margin-bottom: 20px;">💰 Pay to this UPI ID</h3>
+      <h3 style="color: var(--coffee-brown); margin-bottom: 20px;">📱 Scan QR Code to Pay</h3>
+      
+      <div style="margin-bottom: 20px;">
+        <img src="data:image/png;base64,{{ qr_code }}" alt="UPI QR Code" style="max-width: 250px; width: 100%; height: auto; border: 3px solid var(--warm-tan); border-radius: 10px; padding: 10px; background: white;">
+        <p style="margin-top: 10px; color: #666; font-size: 14px;">Scan with any UPI App (GPay, PhonePe, etc.)</p>
+      </div>
+
+      <h3 style="color: var(--coffee-brown); margin: 25px 0 15px;">💰 Or Use UPI ID</h3>
       
       <div style="background: #f0f0f0; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
         <div style="font-size: 24px; font-weight: bold; color: var(--coffee-brown); margin-bottom: 10px;">

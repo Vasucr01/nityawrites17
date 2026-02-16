@@ -554,84 +554,58 @@ body {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  /* Clean Mobile CSS */
 
-  /* DEBUG: SEE GAP SOURCE */
-  * {
-    outline: 1px solid red !important;
-  }
-
-  html,
   body {
     overflow-x: hidden !important;
-    position: relative;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-  }
-
-  /* Force hide anything leaking off-screen */
-  section,
-  .hero,
-  .navbar,
-  .footer {
-    overflow-x: hidden !important;
-    max-width: 100vw !important;
   }
 
   .hero {
-    padding: 60px 20px;
-    /* Reduced from 100px */
+    padding: 40px 15px;
   }
 
   .hero h1 {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
   }
 
   .book-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    /* Reduced from 250px to fit small screens */
-    gap: 15px;
-    /* Reduced gap */
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 0 15px;
   }
 
   section h2 {
-    font-size: 2rem;
-    margin-bottom: 30px;
-    /* Reduced margin */
+    font-size: 1.8rem;
   }
 
   section {
-    padding: 50px 15px;
+    padding: 40px 15px;
   }
 
   /* Mobile Navigation */
   .nav-container {
-    padding: 15px 20px;
+    padding: 12px 15px;
   }
 
   .nav-menu {
     position: fixed;
     right: -100%;
-    /* Changed to right for better slide-in */
-    left: auto;
-    /* Unset left */
-    top: 70px;
+    top: 60px;
     flex-direction: column;
     background: linear-gradient(135deg, var(--coffee-brown), var(--dark-brown));
-    width: 80%;
-    /* Reduced width */
+    width: 75%;
+    max-width: 300px;
     height: 100vh;
     text-align: center;
     transition: right 0.3s ease;
     box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
-    padding: 40px 0;
-    gap: 25px;
+    padding: 30px 0;
+    gap: 20px;
     z-index: 999;
   }
 
   .nav-menu.active {
     right: 0;
-    left: auto;
   }
 
   .nav-toggle {
@@ -639,13 +613,13 @@ body {
   }
 
   .logo-text {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
   }
 
   /* Mobile Footer */
   .footer-container {
     grid-template-columns: 1fr;
-    gap: 30px;
+    gap: 25px;
   }
 
   .footer-section {

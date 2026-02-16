@@ -365,10 +365,23 @@ def send_order_confirmation_email(order):
         subject=subject,
         message=plain_message,
         from_email=settings.DEFAULT_FROM_EMAIL,
-        recipient_list=[order.email, settings.DEFAULT_FROM_EMAIL], # BCC equivalent by adding to recipient list
+        recipient_list=[order.email.strip()], 
         html_message=html_message,
         fail_silently=False,
     )
+    
+    # Also send a copy to the store owner silently
+    try:
+        send_mail(
+            subject=f"[BCC] {subject}",
+            message=plain_message,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[settings.EMAIL_HOST_USER],
+            html_message=html_message,
+            fail_silently=True,
+        )
+    except:
+        pass
 
 
 def order_success(request, order_id):
@@ -455,9 +468,8 @@ def admin_order_fail(request, pk):
 
 def test_email_view(request):
     """Deep debug for email with optional order ID and order listing"""
-    # Temporarily disabled staff check for debugging
-    # if not request.user.is_staff:
-    #     return HttpResponse("Unauthorized - Please login to admin first", status=403)
+    if not request.user.is_staff:
+        return HttpResponse("Unauthorized - Please login to admin first", status=403)
     
     from django.utils import timezone
     order_id = request.GET.get('order_id')

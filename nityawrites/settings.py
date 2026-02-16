@@ -180,4 +180,4 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'nityabhambhani17@gmail.com'
 EMAIL_HOST_PASSWORD = 'tkbf hqtw lufm rsyc'  # Provided App Password
-DEFAULT_FROM_EMAIL = 'Nityawrites <nityabhambhani17@gmail.com>'
+DEFAULT_FROM_EMAIL = 'nityabhambhani17@gmail.com'

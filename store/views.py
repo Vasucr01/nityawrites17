@@ -452,3 +452,21 @@ def admin_order_fail(request, pk):
         payment.save()
         
     return redirect('/admin/store/order/')
+def test_email_view(request):
+    """View to test if SMTP is working"""
+    if not request.user.is_staff:
+        return HttpResponse("Unauthorized", status=403)
+    
+    test_email = request.GET.get('email', settings.EMAIL_HOST_USER)
+    try:
+        send_mail(
+            'Test Email from Nityawrites',
+            'If you are reading this, your SMTP settings are working correctly! 📚✨',
+            settings.DEFAULT_FROM_EMAIL,
+            [test_email],
+            fail_silently=False,
+        )
+        return HttpResponse(f"Test email successfully sent to {test_email}!")
+    except Exception as e:
+        import traceback
+        return HttpResponse(f"FAILED to send test email: {str(e)}<br><pre>{traceback.format_exc()}</pre>")

@@ -22,8 +22,8 @@
 <section class="about">
   <h2>About The Book</h2>
   
-  <div style="max-width: 800px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start;">
-    <div>
+  <div class="book-detail-grid">
+    <div class="book-image">
       {% if book.image %}
         <img src="{{ book.image.url }}" alt="{{ book.title }}" style="width: 100%; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
       {% else %}
@@ -33,16 +33,20 @@
       {% endif %}
     </div>
     
-    <div style="text-align: left;">
+    <div class="book-info">
       <p style="line-height: 1.8; color: #333;">{{ book.description }}</p>
-      <p style="margin-top: 20px;"><strong>Author:</strong> {{ book.author }}</p>
-      <p><strong>Price:</strong> ₹{{ book.price }}</p>
-      <p><strong>Stock:</strong> {{ book.stock }} available</p>
+      <div style="margin-top: 20px;">
+        <p><strong>Author:</strong> {{ book.author }}</p>
+        <p><strong>Price:</strong> ₹{{ book.price }}</p>
+        <p><strong>Stock:</strong> {{ book.stock }} available</p>
+      </div>
       
-      {% if book.stock > 0 %}
-        <a href="{% url 'cart_add' book.pk %}" class="btn" style="margin-top: 20px; display: inline-block;">Add to Cart</a>
-      {% endif %}
-      <a href="{% url 'home' %}" class="btn" style="margin-top: 20px; display: inline-block; background: #5e4438;">← Back to Books</a>
+      <div class="action-buttons" style="margin-top: 30px;">
+        {% if book.stock > 0 %}
+          <a href="{% url 'cart_add' book.pk %}" class="btn">Add to Cart</a>
+        {% endif %}
+        <a href="{% url 'home' %}" class="btn" style="background: #5e4438;">← Back to Books</a>
+      </div>
     </div>
   </div>
 </section>

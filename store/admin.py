@@ -79,8 +79,8 @@ class OrderAdmin(admin.ModelAdmin):
 
     def quick_actions(self, obj):
         from django.utils.safestring import mark_safe
-        verify_url = f"/admin/store/order_verify/{obj.pk}/"
-        fail_url = f"/admin/store/order_fail/{obj.pk}/"
+        verify_url = f"/manage-order/verify/{obj.pk}/"
+        fail_url = f"/manage-order/fail/{obj.pk}/"
         return mark_safe(f"""
             <a class="button" href="{verify_url}" style="background: #28a745; color: white; padding: 5px 10px; border-radius: 4px; text-decoration: none; margin-right: 5px; font-size: 11px;">✅ Verify</a>
             <a class="button" href="{fail_url}" style="background: #dc3545; color: white; padding: 5px 10px; border-radius: 4px; text-decoration: none; font-size: 11px;">❌ Fail</a>
@@ -157,8 +157,8 @@ class PaymentAdmin(admin.ModelAdmin):
     
     def quick_actions(self, obj):
         from django.utils.safestring import mark_safe
-        verify_url = f"/admin/store/order_verify/{obj.order.pk}/"
-        fail_url = f"/admin/store/order_fail/{obj.order.pk}/"
+        verify_url = f"/manage-order/verify/{obj.order.pk}/"
+        fail_url = f"/manage-order/fail/{obj.order.pk}/"
         return mark_safe(f"""
             <a class="button" href="{verify_url}" style="background: #28a745; color: white; padding: 5px 10px; border-radius: 4px; text-decoration: none; margin-right: 5px; font-size: 11px;">✅ Verify</a>
             <a class="button" href="{fail_url}" style="background: #dc3545; color: white; padding: 5px 10px; border-radius: 4px; text-decoration: none; font-size: 11px;">❌ Fail</a>

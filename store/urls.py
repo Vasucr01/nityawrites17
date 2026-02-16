@@ -15,6 +15,6 @@ urlpatterns = [
     path('order/success/<str:order_id>/', views.order_success, name='order_success'),
     path('order/failed/', views.order_failed, name='order_failed'),
     path('force-migrate/', views.force_migrate, name='force_migrate'),
-    path('admin/store/order_verify/<int:pk>/', views.admin_order_verify, name='admin_order_verify'),
-    path('admin/store/order_fail/<int:pk>/', views.admin_order_fail, name='admin_order_fail'),
+    path('manage-order/verify/<int:pk>/', views.admin_order_verify, name='admin_order_verify'),
+    path('manage-order/fail/<int:pk>/', views.admin_order_fail, name='admin_order_fail'),
 ]

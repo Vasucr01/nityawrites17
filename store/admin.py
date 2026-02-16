@@ -73,8 +73,43 @@ class OrderAdmin(admin.ModelAdmin):
     list_filter = ['payment_status', 'created_at']
     search_fields = ['order_id', 'customer_name', 'email', 'phone']
     readonly_fields = ['order_id', 'created_at']
+    list_editable = ['payment_status']
     inlines = [OrderItemInline]
-    actions = [export_orders_to_excel]
+    actions = [export_orders_to_excel, 'mark_as_verified', 'mark_as_failed']
+
+    def mark_as_verified(self, request, queryset):
+        from .views import send_order_confirmation_email
+        from django.utils import timezone
+        count = 0
+        for order in queryset:
+            order.payment_status = 'verified'
+            order.save()
+            # Update associated payment
+            payment = getattr(order, 'payment', None)
+            if payment:
+                payment.status = 'verified'
+                payment.verified_at = timezone.now()
+                payment.save()
+            
+            # Send email
+            try:
+                send_order_confirmation_email(order)
+            except Exception as e:
+                self.message_user(request, f"Error sending email for {order.order_id}: {e}", level='Warning')
+            
+            count += 1
+        self.message_user(request, f'{count} order(s) marked as verified and emails sent.')
+    mark_as_verified.short_description = "✅ Mark as Verified & Send Email"
+
+    def mark_as_failed(self, request, queryset):
+        count = queryset.update(payment_status='failed')
+        for order in queryset:
+            payment = getattr(order, 'payment', None)
+            if payment:
+                payment.status = 'failed'
+                payment.save()
+        self.message_user(request, f'{count} order(s) marked as failed.')
+    mark_as_failed.short_description = "❌ Mark as Failed"
 
 
 @admin.register(OrderItem)
@@ -89,6 +124,7 @@ class PaymentAdmin(admin.ModelAdmin):
     list_filter = ['status', 'created_at']
     search_fields = ['upi_transaction_id', 'payment_reference', 'order__order_id']
     readonly_fields = ['created_at', 'screenshot_preview']
+    list_editable = ['status']
     fields = ['order', 'upi_transaction_id', 'payment_reference', 'amount', 'status', 'created_at', 'verified_at', 'screenshot_preview', 'payment_screenshot']
     actions = ['mark_as_verified', 'mark_as_failed']
     
@@ -111,6 +147,7 @@ class PaymentAdmin(admin.ModelAdmin):
     
     def mark_as_verified(self, request, queryset):
         """Mark selected payments as verified"""
+        from .views import send_order_confirmation_email
         from django.utils import timezone
         count = 0
         for payment in queryset:
@@ -120,9 +157,16 @@ class PaymentAdmin(admin.ModelAdmin):
             # Update order status
             payment.order.payment_status = 'verified'
             payment.order.save()
+            
+            # Send email
+            try:
+                send_order_confirmation_email(payment.order)
+            except Exception as e:
+                self.message_user(request, f"Error sending email for {payment.order.order_id}: {e}", level='Warning')
+                
             count += 1
-        self.message_user(request, f'{count} payment(s) marked as verified.')
-    mark_as_verified.short_description = "✅ Mark as Verified"
+        self.message_user(request, f'{count} payment(s) marked as verified and emails sent.')
+    mark_as_verified.short_description = "✅ Mark as Verified & Send Email"
     
     def mark_as_failed(self, request, queryset):
         """Mark selected payments as failed"""

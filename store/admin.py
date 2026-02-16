@@ -155,6 +155,16 @@ class PaymentAdmin(admin.ModelAdmin):
         return "No screenshot uploaded"
     screenshot_preview.short_description = 'Payment Screenshot'
     
+    def quick_actions(self, obj):
+        from django.utils.safestring import mark_safe
+        verify_url = f"/admin/store/order_verify/{obj.order.pk}/"
+        fail_url = f"/admin/store/order_fail/{obj.order.pk}/"
+        return mark_safe(f"""
+            <a class="button" href="{verify_url}" style="background: #28a745; color: white; padding: 5px 10px; border-radius: 4px; text-decoration: none; margin-right: 5px; font-size: 11px;">✅ Verify</a>
+            <a class="button" href="{fail_url}" style="background: #dc3545; color: white; padding: 5px 10px; border-radius: 4px; text-decoration: none; font-size: 11px;">❌ Fail</a>
+        """)
+    quick_actions.short_description = 'Quick Actions'
+
     def mark_as_verified(self, request, queryset):
         """Mark selected payments as verified"""
         from .views import send_order_confirmation_email

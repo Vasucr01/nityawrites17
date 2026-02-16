@@ -187,34 +187,11 @@ def payment_process(request):
         # Store order ID in session
         request.session['current_order_id'] = order.id
         
-        # Generate UPI QR Code - Ultra Simple
-        import qrcode
-        import io
-        import base64
-        
+        # Simple context for manual payment
         upi_id = settings.UPI_ID
-        payee_name = 'Nitya'
-        amount = "{:.2f}".format(total)
-        
-        # Bare minimum UPI string for maximum compatibility
-        upi_string = f"upi://pay?pa={upi_id}&pn={payee_name}&am={amount}&cu=INR"
-        
-        # Generate QR code - simple version
-        qr_img = qrcode.make(upi_string)
-        
-        # Convert to base64
-        buffer = io.BytesIO()
-        qr_img.save(buffer, format='PNG')
-        buffer.seek(0)
-        qr_code_base64 = base64.b64encode(buffer.getvalue()).decode()
-        
-        # Keep deeplink for mobile
-        upi_link = upi_string
         
         context = {
             'order': order,
-            'upi_link': upi_link,
-            'qr_code': qr_code_base64,
             'total': total,
             'upi_id_debug': upi_id
         }

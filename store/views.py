@@ -188,12 +188,23 @@ def payment_process(request):
         request.session['current_order_id'] = order.id
         
         # Generate UPI deeplink
-        upi_id = 'nityabhambhani17@oksbi'
+        upi_id = 'nityabhambhani@upi'
         payee_name = 'Nityawrites'
         amount = str(total)
-        note = 'Book Order - Nityawrites'
+        note = f'Order {order.order_id}'
         
-        upi_link = f"upi://pay?pa={upi_id}&pn={quote(payee_name)}&am={amount}&cu=INR&tn={quote(note)}"
+        # Construct UPI link with transaction reference (tr) for better compatibility
+        upi_params = {
+            'pa': upi_id,
+            'pn': payee_name,
+            'am': amount,
+            'cu': 'INR',
+            'tn': note,
+            'tr': order.order_id  # Transaction reference is crucial for some apps
+        }
+        
+        query_string = '&'.join([f"{key}={quote(str(value))}" for key, value in upi_params.items()])
+        upi_link = f"upi://pay?{query_string}"
         
         context = {
             'order': order,

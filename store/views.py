@@ -224,6 +224,42 @@ def payment_process(request):
     return redirect('checkout')
 
 
+def upload_payment_proof(request, order_id):
+    """Handle payment screenshot upload"""
+    if request.method == 'POST':
+        try:
+            order = Order.objects.get(pk=order_id)
+            payment = order.payment
+            
+            # Save payment reference if provided
+            payment_ref = request.POST.get('payment_reference', '').strip()
+            if payment_ref:
+                payment.payment_reference = payment_ref
+            
+            # Save screenshot
+            if 'payment_screenshot' in request.FILES:
+                payment.payment_screenshot = request.FILES['payment_screenshot']
+                payment.status = 'pending_verification'
+                payment.save()
+                
+                # Update order status
+                order.payment_status = 'pending_verification'
+                order.save()
+                
+                return render(request, 'store/payment_submitted.html', {'order': order})
+            else:
+                return render(request, 'store/payment.html', {
+                    'order': order,
+                    'error': 'Please upload a payment screenshot',
+                    'total': order.total_amount,
+                    'upi_id_debug': settings.UPI_ID
+                })
+        except Order.DoesNotExist:
+            return redirect('home')
+    
+    return redirect('home')
+
+
 @csrf_exempt
 def payment_callback(request):
     """Handle UPI payment confirmation with transaction ID"""

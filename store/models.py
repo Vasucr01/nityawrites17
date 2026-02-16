@@ -65,9 +65,12 @@ class Payment(models.Model):
     """Model for payment transactions"""
     order = models.OneToOneField(Order, on_delete=models.CASCADE, related_name='payment')
     upi_transaction_id = models.CharField(max_length=200, blank=True, help_text='UPI Transaction/Reference ID')
+    payment_reference = models.CharField(max_length=200, blank=True, help_text='Customer entered payment reference number')
+    payment_screenshot = models.ImageField(upload_to='payment_screenshots/', blank=True, null=True, help_text='Payment proof screenshot')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=20, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
+    verified_at = models.DateTimeField(null=True, blank=True, help_text='When payment was verified by admin')
     
     def __str__(self):
         return f"Payment for {self.order.order_id}"

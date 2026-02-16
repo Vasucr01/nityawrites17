@@ -4,91 +4,91 @@
 {% block title %}Payment - Nityawrites{% endblock %}
 
 {% block content %}
-<section class="payment">
+<section class="order" id="order">
   <h2>Complete Your Payment</h2>
   
-  <div style="max-width: 600px; margin: 0 auto; padding: 30px; background: #f9f9f9; border-radius: 10px;">
-    <div style="text-align: center; margin-bottom: 30px;">
-      <h3>Order ID: {{ order.order_id }}</h3>
-      <p style="font-size: 28px; font-weight: bold; color: #7a5c4d; margin: 20px 0;">₹{{ total }}</p>
-      <p style="font-size: 14px; color: #666;">Pay to: <strong>{{ upi_id_debug }}</strong></p>
-    </div>
+  <div style="max-width: 700px; margin: 0 auto; padding: 30px; background: #f9f9f9; border-radius: 10px;">
     
-    <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-      <h4 style="margin-top: 0;">Order Summary</h4>
-      {% for item in order.items.all %}
+    <!-- Order Summary -->
+    <div style="background: white; padding: 20px; border-radius: 10px; margin-bottom: 30px; border-left: 4px solid var(--coffee-brown);">
+      <h3 style="margin-top: 0; color: var(--coffee-brown);">📦 Order Summary</h3>
       <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
-        <span>{{ item.book.title }} (x{{ item.quantity }})</span>
-        <span>₹{{ item.price }}</span>
+        <span><strong>Order ID:</strong></span>
+        <span style="font-family: monospace; font-weight: bold; color: var(--mocha);">{{ order.order_id }}</span>
       </div>
-      {% endfor %}
+      <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
+        <span><strong>Customer:</strong></span>
+        <span>{{ order.customer_name }}</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; padding: 15px 0; font-size: 20px; font-weight: bold; color: var(--coffee-brown);">
+        <span>Total Amount:</span>
+        <span>₹{{ total }}</span>
+      </div>
     </div>
-    
-    <div style="text-align: center; margin: 30px 0;">
-      <!-- QR Code for Desktop/Scanning -->
-      <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 25px;">
-        <h3 style="color: var(--coffee-brown); margin-bottom: 15px;">📱 Scan QR Code to Pay</h3>
-        <img src="data:image/png;base64,{{ qr_code }}" alt="UPI QR Code" style="max-width: 300px; width: 100%; height: auto; border: 3px solid var(--warm-tan); border-radius: 10px;">
-        <p style="margin-top: 15px; color: #666; font-size: 14px;">
-          Open any UPI app (GPay, PhonePe, Paytm, etc.) and scan this QR code
-        </p>
+
+    <!-- Payment Instructions -->
+    <div style="background: #fff3cd; padding: 20px; border-radius: 10px; border-left: 4px solid #ffc107; margin-bottom: 25px;">
+      <h3 style="margin-top: 0; color: #856404;">💳 How to Pay</h3>
+      <ol style="margin: 10px 0; padding-left: 20px; line-height: 1.8;">
+        <li>Open <strong>any UPI app</strong> (GPay, PhonePe, Paytm, etc.)</li>
+        <li>Send <strong>₹{{ total }}</strong> to the UPI ID below</li>
+        <li>Use Order ID <code style="background: #fff; padding: 2px 6px; border-radius: 3px;">{{ order.order_id }}</code> as note/remark</li>
+        <li>Take a <strong>screenshot</strong> of the payment confirmation</li>
+        <li>Upload the screenshot below</li>
+      </ol>
+    </div>
+
+    <!-- UPI Payment Details -->
+    <div style="text-align: center; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 25px;">
+      <h3 style="color: var(--coffee-brown); margin-bottom: 20px;">💰 Pay to this UPI ID</h3>
+      
+      <div style="background: #f0f0f0; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+        <div style="font-size: 24px; font-weight: bold; color: var(--coffee-brown); margin-bottom: 10px;">
+          {{ upi_id_debug }}
+        </div>
+        <button type="button" onclick="copyToClipboard('{{ upi_id_debug }}')" class="btn" style="padding: 10px 20px; font-size: 14px; margin: 10px 0; background: var(--mocha);">
+          📋 Copy UPI ID
+        </button>
       </div>
 
-      <!-- Mobile Deeplink Button -->
-      <div style="margin-bottom: 25px;">
-        <a href="{{ upi_link }}" class="btn" style="font-size: 18px; padding: 15px 40px; display: inline-block; text-decoration: none;">
-          💳 Pay via UPI App (Mobile)
-        </a>
-        <p style="color: #666; margin-top: 10px; font-size: 13px;">
-          Click if you're on mobile
-        </p>
-      </div>
-      
-      <!-- Manual Payment Fallback -->
-      <div style="margin-top: 25px; padding: 20px; background: #fff; border: 1px dashed var(--warm-tan); border-radius: 10px;">
-        <p style="font-size: 14px; color: var(--mocha); margin-bottom: 15px;">
-          <strong>Alternative: Manual Payment</strong><br>
-          Copy the UPI ID below and pay manually in your app
-        </p>
-        <div style="display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;">
-          <code id="upi-id-box" style="background: #f0f0f0; padding: 10px 15px; border-radius: 5px; font-size: 16px; font-weight: bold; color: #333;">{{ upi_id_debug }}</code>
-          <button type="button" onclick="copyToClipboard('{{ upi_id_debug }}')" class="btn" style="padding: 8px 15px; font-size: 12px; margin: 0; background: var(--mocha);">
-            Copy ID
-          </button>
-        </div>
-        <p style="margin-top: 10px; font-size: 13px; color: #888;">
-          Amount: ₹{{ total }}
+      <div style="background: #e8f5e9; padding: 15px; border-radius: 8px; margin-top: 15px;">
+        <p style="margin: 0; color: #2e7d32; font-size: 14px;">
+          <strong>Amount to Pay:</strong> ₹{{ total }}<br>
+          <strong>Note/Remark:</strong> {{ order.order_id }}
         </p>
       </div>
     </div>
-    
-    <div style="background: #fff3cd; padding: 15px; border-radius: 8px; border-left: 4px solid #ffc107; margin: 20px 0;">
-      <p style="margin: 0; font-size: 14px;">
-        <strong>After completing payment:</strong><br>
-        Please enter your UPI Transaction ID below to confirm your order.
-      </p>
-    </div>
-    
-    <form method="post" action="{% url 'payment_callback' %}" style="margin-top: 30px;">
+
+    <!-- Upload Payment Proof -->
+    <form method="post" action="{% url 'upload_payment_proof' order.id %}" enctype="multipart/form-data" style="background: white; padding: 25px; border-radius: 10px; border: 2px dashed var(--warm-tan);">
       {% csrf_token %}
-      <label for="upi_transaction_id" style="display: block; margin-bottom: 10px; font-weight: bold;">
-        UPI Transaction ID / Reference ID: <span style="color: red;">*</span>
-      </label>
-      <input 
-        type="text" 
-        id="upi_transaction_id" 
-        name="upi_transaction_id" 
-        placeholder="Enter your UPI Transaction ID" 
-        required
-        style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 15px;"
-      >
-      <p style="font-size: 12px; color: #666; margin-bottom: 20px;">
-        You can find this in your UPI app's transaction history
-      </p>
-      <button type="submit" style="width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 6px; font-size: 16px; cursor: pointer;">
-        ✓ Confirm Order
+      
+      <h3 style="margin-top: 0; color: var(--coffee-brown);">📸 Upload Payment Proof</h3>
+      
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; margin-bottom: 10px; font-weight: bold;">Payment Reference/Transaction ID (Optional):</label>
+        <input type="text" name="payment_reference" placeholder="e.g., 123456789012" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;" maxlength="200">
+        <small style="color: #666; display: block; margin-top: 5px;">Enter the UPI transaction ID if available</small>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; margin-bottom: 10px; font-weight: bold;">Upload Screenshot: <span style="color: red;">*</span></label>
+        <input type="file" name="payment_screenshot" accept="image/*" required style="width: 100%; padding: 12px; border: 2px solid var(--warm-tan); border-radius: 5px; background: #fafafa;">
+        <small style="color: #666; display: block; margin-top: 5px;">Upload a clear screenshot of your payment confirmation</small>
+      </div>
+
+      <button type="submit" class="btn" style="width: 100%; padding: 15px; font-size: 16px; background: var(--coffee-brown);">
+        ✅ Submit Payment Proof
       </button>
     </form>
+
+    <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #2196f3;">
+      <p style="margin: 0; color: #1565c0; font-size: 14px;">
+        <strong>ℹ️ What happens next?</strong><br>
+        After you submit the payment proof, our team will verify it within 24 hours. You'll receive an email confirmation once verified.
+      </p>
+    </div>
+
   </div>
 </section>
 {% endblock %}

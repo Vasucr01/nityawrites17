@@ -1,0 +1,59 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Payment Submitted - Nityawrites{% endblock %}
+
+{% block content %}
+<section class="order" id="order">
+  <div style="max-width: 600px; margin: 0 auto; text-align: center; padding: 40px;">
+    
+    <div style="background: #d4edda; padding: 30px; border-radius: 15px; border: 2px solid #28a745; margin-bottom: 30px;">
+      <div style="font-size: 60px; margin-bottom: 15px;">✅</div>
+      <h2 style="color: #155724; margin-bottom: 15px;">Payment Proof Submitted!</h2>
+      <p style="color: #155724; font-size: 16px; line-height: 1.6;">
+        Thank you for submitting your payment proof. We'll verify it within 24 hours.
+      </p>
+    </div>
+
+    <div style="background: #f9f9f9; padding: 25px; border-radius: 10px; text-align: left; margin-bottom: 25px;">
+      <h3 style="margin-top: 0; color: var(--coffee-brown);">📦 Order Details</h3>
+      <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #ddd;">
+        <span><strong>Order ID:</strong></span>
+        <span style="font-family: monospace; font-weight: bold;">{{ order.order_id }}</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #ddd;">
+        <span><strong>Customer:</strong></span>
+        <span>{{ order.customer_name }}</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #ddd;">
+        <span><strong>Email:</strong></span>
+        <span>{{ order.email }}</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; padding: 15px 0; font-size: 18px; font-weight: bold; color: var(--coffee-brown);">
+        <span>Total Amount:</span>
+        <span>₹{{ order.total_amount }}</span>
+      </div>
+    </div>
+
+    <div style="background: #fff3cd; padding: 20px; border-radius: 10px; border-left: 4px solid #ffc107; margin-bottom: 25px;">
+      <h4 style="margin-top: 0; color: #856404;">📧 What's Next?</h4>
+      <ul style="text-align: left; line-height: 1.8; color: #856404;">
+        <li>Our team will verify your payment within <strong>24 hours</strong></li>
+        <li>You'll receive a confirmation email at <strong>{{ order.email }}</strong></li>
+        <li>Once verified, we'll process your order for delivery</li>
+        <li>You can contact us at <strong>nityabhambhani17@gmail.com</strong> for any queries</li>
+      </ul>
+    </div>
+
+    <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 25px;">
+      <p style="margin: 0; color: #1565c0; font-size: 14px;">
+        <strong>ℹ️ Note:</strong> Please save your Order ID <code style="background: white; padding: 2px 6px; border-radius: 3px;">{{ order.order_id }}</code> for future reference.
+      </p>
+    </div>
+
+    <a href="{% url 'home' %}" class="btn" style="display: inline-block; padding: 15px 40px; text-decoration: none; background: var(--coffee-brown);">
+      🏠 Back to Home
+    </a>
+  </div>
+</section>
+{% endblock %}

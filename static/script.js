@@ -49,6 +49,15 @@ document.addEventListener('click', (e) => {
   }
 });
 
+// Copy to Clipboard
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    alert('UPI ID Copied: ' + text);
+  }).catch(err => {
+    console.error('Failed to copy: ', err);
+  });
+}
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
   updateCartCount();

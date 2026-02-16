@@ -26,10 +26,23 @@
     
     <div style="text-align: center; margin: 30px 0;">
       <a href="{{ upi_link }}" class="btn" style="font-size: 18px; padding: 15px 40px; display: inline-block; text-decoration: none;">
-        💳 Pay via UPI
+        💳 Pay via UPI App
       </a>
+      
+      <div style="margin-top: 25px; padding: 20px; background: #fff; border: 1px dashed var(--warm-tan); border-radius: 10px;">
+        <p style="font-size: 14px; color: var(--mocha); margin-bottom: 15px;">
+          <strong>Alternative: Manual Payment</strong><br>
+          If the button above shows a "Bank Limit" error, copy the ID below and pay manually in your app.
+        </p>
+        <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+          <code id="upi-id-box" style="background: #f0f0f0; padding: 10px 15px; border-radius: 5px; font-size: 16px; font-weight: bold; color: #333;">{{ upi_id_debug }}</code>
+          <button type="button" onclick="copyToClipboard('{{ upi_id_debug }}')" class="btn" style="padding: 8px 15px; font-size: 12px; margin: 0; background: var(--mocha);">
+            Copy ID
+          </button>
+        </div>
+      </div>
+
       <p style="color: #666; margin-top: 15px; font-size: 14px;">
-        Click the button above to open your UPI app<br>
         (Google Pay, PhonePe, Paytm, BHIM, etc.)
       </p>
     </div>

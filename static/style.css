@@ -554,8 +554,29 @@ body {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  /* DEBUG: UNCOMMENT TO SEE GAP SOURCE */
-  /* * { outline: 1px solid red !important; } */
+
+  /* DEBUG: SEE GAP SOURCE */
+  * {
+    outline: 1px solid red !important;
+  }
+
+  html,
+  body {
+    overflow-x: hidden !important;
+    position: relative;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Force hide anything leaking off-screen */
+  section,
+  .hero,
+  .navbar,
+  .footer {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+  }
 
   .hero {
     padding: 60px 20px;

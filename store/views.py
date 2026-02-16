@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
+from django.core.management import call_command
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.core.mail import send_mail
@@ -360,6 +361,18 @@ def order_success(request, order_id):
     return render(request, 'store/order_success.html', {'order': order})
 
 
+
 def order_failed(request):
     """Display order failure page"""
     return render(request, 'store/order_failed.html')
+
+
+def force_migrate(request):
+    """Temporary view to run migrations manually in production"""
+    import io
+    try:
+        output = io.StringIO()
+        call_command('migrate', interactive=False, stdout=output)
+        return HttpResponse(f"Migrations successful!<br><pre>{output.getvalue()}</pre>")
+    except Exception as e:
+        return HttpResponse(f"Migration failed: {str(e)}", status=500)

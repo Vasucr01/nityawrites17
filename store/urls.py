@@ -14,4 +14,5 @@ urlpatterns = [
     path('payment/callback/', views.payment_callback, name='payment_callback'),
     path('order/success/<str:order_id>/', views.order_success, name='order_success'),
     path('order/failed/', views.order_failed, name='order_failed'),
+    path('force-migrate/', views.force_migrate, name='force_migrate'),
 ]

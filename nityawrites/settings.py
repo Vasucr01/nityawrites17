@@ -172,3 +172,12 @@ STORAGES = {
 
 # UPI Configuration
 UPI_ID = 'nityabhambhani@upi'
+
+# Email Configuration (Gmail SMTP)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'nityabhambhani17@gmail.com'
+EMAIL_HOST_PASSWORD = 'tkbf hqtw lufm rsyc'  # Provided App Password
+DEFAULT_FROM_EMAIL = 'Nityawrites <nityabhambhani17@gmail.com>'

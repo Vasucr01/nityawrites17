@@ -368,11 +368,25 @@ def order_failed(request):
 
 
 def force_migrate(request):
-    """Temporary view to run migrations manually in production"""
+    """Temporary view to run migrations manually in production and force-add columns"""
     import io
+    from django.db import connection
+    output = io.StringIO()
     try:
-        output = io.StringIO()
+        # 1. Try standard migration
         call_command('migrate', interactive=False, stdout=output)
-        return HttpResponse(f"Migrations successful!<br><pre>{output.getvalue()}</pre>")
+        
+        # 2. Force add columns using raw SQL in case migration record is out of sync
+        with connection.cursor() as cursor:
+            try:
+                # Add columns if they don't exist
+                cursor.execute('ALTER TABLE store_payment ADD COLUMN IF NOT EXISTS payment_reference VARCHAR(200);')
+                cursor.execute('ALTER TABLE store_payment ADD COLUMN IF NOT EXISTS payment_screenshot VARCHAR(100);')
+                cursor.execute('ALTER TABLE store_payment ADD COLUMN IF NOT EXISTS verified_at TIMESTAMP WITH TIME ZONE;')
+                output.write("\nRaw SQL column additions attempted (IF NOT EXISTS).")
+            except Exception as sql_e:
+                output.write(f"\nRaw SQL failed: {str(sql_e)}")
+                
+        return HttpResponse(f"Migration tool finished.<br><pre>{output.getvalue()}</pre>")
     except Exception as e:
-        return HttpResponse(f"Migration failed: {str(e)}", status=500)
+        return HttpResponse(f"Migration tool fatal error: {str(e)}", status=500)

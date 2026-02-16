@@ -140,7 +140,7 @@ def checkout(request):
 
 
 def payment_process(request):
-    """Process payment using UPI deeplink"""
+    """Process payment using UPI QR code"""
     if request.method == 'POST':
         cart = request.session.get('cart', {})
         
@@ -187,21 +187,39 @@ def payment_process(request):
         # Store order ID in session
         request.session['current_order_id'] = order.id
         
-        # Use global UPI ID from settings
-        upi_id = settings.UPI_ID
-        payee_name = 'Nityawrites'
-        amount = "{:.2f}".format(total)
-        note = f'Order {order.order_id}'
+        # Generate UPI QR Code
+        import qrcode
+        import io
+        import base64
         
-        # Final Simplified UPI link
-        payee_name = 'Nitya' # Simplest name
-        upi_link = f"upi://pay?pa={upi_id}&pn={quote(payee_name)}&am={amount}&cu=INR"
+        upi_id = settings.UPI_ID
+        payee_name = 'Nitya'
+        amount = "{:.2f}".format(total)
+        
+        # UPI string for QR code
+        upi_string = f"upi://pay?pa={upi_id}&pn={quote(payee_name)}&am={amount}&cu=INR&tn=Order {order.order_id}"
+        
+        # Generate QR code
+        qr = qrcode.QRCode(version=1, box_size=10, border=4)
+        qr.add_data(upi_string)
+        qr.make(fit=True)
+        img = qr.make_image(fill_color="black", back_color="white")
+        
+        # Convert to base64 for embedding in HTML
+        buffer = io.BytesIO()
+        img.save(buffer, format='PNG')
+        buffer.seek(0)
+        qr_code_base64 = base64.b64encode(buffer.getvalue()).decode()
+        
+        # Also keep deeplink for mobile users
+        upi_link = upi_string
         
         context = {
             'order': order,
             'upi_link': upi_link,
+            'qr_code': qr_code_base64,
             'total': total,
-            'upi_id_debug': upi_id # Added for visual verification
+            'upi_id_debug': upi_id
         }
         
         return render(request, 'store/payment.html', context)

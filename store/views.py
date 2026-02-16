@@ -187,8 +187,8 @@ def payment_process(request):
         # Store order ID in session
         request.session['current_order_id'] = order.id
         
-        # Generate UPI deeplink
-        upi_id = 'nityabhambhani@upi'
+        # Use global UPI ID from settings
+        upi_id = settings.UPI_ID
         payee_name = 'Nityawrites'
         amount = "{:.2f}".format(total)
         note = f'Order {order.order_id}'
@@ -200,7 +200,8 @@ def payment_process(request):
         context = {
             'order': order,
             'upi_link': upi_link,
-            'total': total
+            'total': total,
+            'upi_id_debug': upi_id # Added for visual verification
         }
         
         return render(request, 'store/payment.html', context)

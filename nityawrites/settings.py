@@ -170,3 +170,5 @@ STORAGES = {
     },
 }
 
+# UPI Configuration
+UPI_ID = 'nityabhambhani@upi'

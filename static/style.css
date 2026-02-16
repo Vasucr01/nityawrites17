@@ -554,6 +554,9 @@ body {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  /* DEBUG: UNCOMMENT TO SEE GAP SOURCE */
+  /* * { outline: 1px solid red !important; } */
+
   .hero {
     padding: 60px 20px;
     /* Reduced from 100px */

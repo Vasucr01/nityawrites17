@@ -190,7 +190,7 @@ def payment_process(request):
         # Generate UPI deeplink
         upi_id = 'nityabhambhani@upi'
         payee_name = 'Nityawrites'
-        amount = str(total)
+        amount = "{:.2f}".format(total)
         note = f'Order {order.order_id}'
         
         # Construct UPI link with transaction reference (tr) for better compatibility

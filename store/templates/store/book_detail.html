@@ -57,9 +57,11 @@
   <div class="book-detail-grid">
     <div class="book-image">
       {% if book.image %}
-        <img src="{{ book.image.url }}" alt="{{ book.title }}" style="width: 100%; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+        <div class="image-wrapper">
+          <img src="{{ book.image.url }}" alt="{{ book.title }}">
+        </div>
       {% else %}
-        <div style="width: 100%; height: 400px; background: linear-gradient(135deg, #f5f1ed, #e8dfd6); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #7a5c4d; font-size: 24px;">
+        <div class="image-placeholder">
           📚 {{ book.title }}
         </div>
       {% endif %}
@@ -82,20 +84,15 @@
 
       <!-- Social Sharing -->
       <div class="social-sharing" style="margin-top: 40px; padding-top: 25px; border-top: 1px solid #eee;">
-        <p style="font-weight: 600; color: var(--coffee-brown); margin-bottom: 15px;">Share this book:</p>
-        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <p style="font-weight: 600; color: var(--coffee-brown); margin-bottom: 15px;">Share via:</p>
+        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
           <a href="https://wa.me/?text={{ book.title|urlencode }}%20-%20Available%20at%20Nityawrites:%20{{ request.build_absolute_uri|urlencode }}" 
-             target="_blank" class="share-btn whatsapp" style="background: #25D366;">
-            <span>WhatsApp</span>
+             target="_blank" class="share-icon whatsapp" title="Share on WhatsApp">
+            <i class="fab fa-whatsapp"></i>
           </a>
-          <a href="https://twitter.com/intent/tweet?text=Check%20out%20{{ book.title|urlencode }}%20at%20Nityawrites&url={{ request.build_absolute_uri|urlencode }}" 
-             target="_blank" class="share-btn twitter" style="background: #1DA1F2;">
-            <span>Twitter</span>
-          </a>
-          <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri|urlencode }}" 
-             target="_blank" class="share-btn facebook" style="background: #4267B2;">
-            <span>Facebook</span>
-          </a>
+          <button onclick="shareOnSocial()" class="share-icon instagram" title="Share link">
+            <i class="fab fa-instagram"></i>
+          </button>
         </div>
       </div>
     </div>
@@ -143,26 +140,44 @@
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px;">
           <div>
             <label style="display: block; margin-bottom: 8px; font-weight: 500;">Your Name</label>
-            <input type="text" name="name" required placeholder="John Doe" style="margin-bottom: 0;">
+            <input type="text" name="name" required placeholder="John Doe" style="margin-bottom: 0; width: 100%; padding: 12px; border: 2px solid var(--warm-tan); border-radius: 10px;">
           </div>
           <div>
             <label style="display: block; margin-bottom: 8px; font-weight: 500;">Rating</label>
-            <select name="rating" required style="width: 100%; padding: 12px; border-radius: 10px; border: 2px solid var(--warm-tan); background: white;">
-              <option value="5">5 Stars - Amazing</option>
-              <option value="4">4 Stars - Very Good</option>
-              <option value="3">3 Stars - Good</option>
-              <option value="2">2 Stars - Okay</option>
-              <option value="1">1 Star - Poor</option>
-            </select>
+            <div class="star-rating">
+              <input type="radio" name="rating" value="5" id="5-stars" required><label for="5-stars">★</label>
+              <input type="radio" name="rating" value="4" id="4-stars"><label for="4-stars">★</label>
+              <input type="radio" name="rating" value="3" id="3-stars"><label for="3-stars">★</label>
+              <input type="radio" name="rating" value="2" id="2-stars"><label for="2-stars">★</label>
+              <input type="radio" name="rating" value="1" id="1-star"><label for="1-star">★</label>
+            </div>
           </div>
         </div>
         <div style="margin-bottom: 25px;">
           <label style="display: block; margin-bottom: 8px; font-weight: 500;">Your Thoughts</label>
-          <textarea name="comment" required rows="4" placeholder="What did you love about this story?" style="margin-bottom: 0;"></textarea>
+          <textarea name="comment" required rows="4" placeholder="What did you love about this story?"></textarea>
         </div>
         <button type="submit" class="btn" style="width: 100%; font-weight: 600;">Post Review ✦</button>
       </form>
     </div>
   </div>
 </section>
+
+<script>
+function shareOnSocial() {
+  const shareData = {
+    title: '{{ book.title }}',
+    text: 'Check out this amazing book at Nityawrites!',
+    url: window.location.href,
+  };
+
+  if (navigator.share) {
+    navigator.share(shareData).catch((err) => console.log('Error sharing', err));
+  } else {
+    // Fallback: Copy to clipboard
+    navigator.clipboard.writeText(window.location.href);
+    alert('Link copied to clipboard! You can now share it on Instagram.');
+  }
+}
+</script>
 {% endblock %}

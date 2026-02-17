@@ -435,15 +435,15 @@ def force_migrate(request):
     try:
         # 0. Show migrations status before
         output.write("--- MIGRATION STATUS BEFORE ---\n")
-        call_command('showmigrations', interactive=False, stdout=output)
+        call_command('showmigrations', stdout=output)
         
         # 1. Try standard migration
         output.write("\n--- RUNNING MIGRATE ---\n")
-        call_command('migrate', interactive=False, stdout=output)
+        call_command('migrate', stdout=output)
         
         # 2. Show migrations status after
         output.write("\n--- MIGRATION STATUS AFTER ---\n")
-        call_command('showmigrations', interactive=False, stdout=output)
+        call_command('showmigrations', stdout=output)
         
         # 3. Force add columns using raw SQL for store_payment
         with connection.cursor() as cursor:

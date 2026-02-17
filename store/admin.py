@@ -2,7 +2,14 @@ from django.contrib import admin
 from django.http import HttpResponse
 from django.utils.html import format_html
 from openpyxl import Workbook
-from .models import Book, Order, OrderItem, Payment, AboutSection, SocialMedia
+from .models import Book, Order, OrderItem, Payment, AboutSection, SocialMedia, Review
+
+
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ['book', 'name', 'rating', 'created_at']
+    list_filter = ['rating', 'created_at']
+    search_fields = ['name', 'comment', 'book__title']
 
 
 @admin.register(Book)

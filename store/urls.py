@@ -18,4 +18,5 @@ urlpatterns = [
     path('manage-order/verify/<int:pk>/', views.admin_order_verify, name='admin_order_verify'),
     path('manage-order/fail/<int:pk>/', views.admin_order_fail, name='admin_order_fail'),
     path('test-email/', views.test_email_view, name='test_email'),
+    path('book/<int:pk>/review/', views.submit_review, name='submit_review'),
 ]

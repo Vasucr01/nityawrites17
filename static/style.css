@@ -424,7 +424,51 @@ textarea {
   }
 }
 
+
+/* ================= SOCIAL SHARING ================= */
+.share-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 18px;
+  color: white;
+  text-decoration: none;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.share-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* ================= REVIEWS ================= */
+.review-card {
+  transition: 0.3s ease;
+}
+
+.review-card:hover {
+  transform: scale(1.02);
+  border-color: var(--warm-tan) !important;
+}
+
+.review-form-container select:focus,
+.review-form-container input:focus,
+.review-form-container textarea:focus {
+  outline: none;
+  border-color: var(--coffee-brown);
+  background: white;
+}
+
+.btn-secondary {
+  background: var(--mocha) !important;
+}
+
 /* ================= SMOOTH SCROLL ================= */
+
 
 html {
   scroll-behavior: smooth;

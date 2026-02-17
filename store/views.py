@@ -6,7 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.core.mail import send_mail
 from django.utils.html import strip_tags
-from .models import Book, Order, OrderItem, Payment, AboutSection, SocialMedia
+from .models import Book, Order, OrderItem, Payment, AboutSection, SocialMedia, Review
 import uuid
 from urllib.parse import quote
 
@@ -28,10 +28,41 @@ def book_detail(request, pk):
     """Display detailed view of a single book"""
     book = get_object_or_404(Book, pk=pk)
     social_links = SocialMedia.objects.filter(is_active=True)
+    reviews = book.reviews.all()
+    
+    # Calculate average rating
+    avg_rating = 0
+    if reviews.exists():
+        avg_rating = sum(r.rating for r in reviews) / reviews.count()
+    
     return render(request, 'store/book_detail.html', {
         'book': book,
-        'social_links': social_links
+        'social_links': social_links,
+        'reviews': reviews,
+        'avg_rating': avg_rating
     })
+
+
+def submit_review(request, pk):
+    """Handle review submission"""
+    if request.method == 'POST':
+        book = get_object_or_404(Book, pk=pk)
+        name = request.POST.get('name')
+        rating = request.POST.get('rating')
+        comment = request.POST.get('comment')
+        
+        if name and rating and comment:
+            Review.objects.create(
+                book=book,
+                name=name,
+                rating=int(rating),
+                comment=comment
+            )
+            messages.success(request, 'Thank you for your review!')
+        else:
+            messages.error(request, 'Please fill in all fields.')
+            
+    return redirect('book_detail', pk=pk)
 
 
 def cart_add(request, pk):

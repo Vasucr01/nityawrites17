@@ -428,33 +428,15 @@ def order_failed(request):
 
 
 def force_migrate(request):
-    """Temporary view to run migrations manually in production with detailed output"""
+    """Temporary view to run migrations manually in production"""
     import io
     from django.db import connection
     output = io.StringIO()
     try:
-        # 0. Show migrations status before
-        output.write("--- MIGRATION STATUS BEFORE ---\n")
-        call_command('showmigrations', stdout=output)
-        
         # 1. Try standard migration
-        output.write("\n--- RUNNING MIGRATE ---\n")
-        call_command('migrate', stdout=output)
+        output.write("--- RUNNING MIGRATE ---\n")
+        call_command('migrate', no_input=True, stdout=output)
         
-        # 2. Show migrations status after
-        output.write("\n--- MIGRATION STATUS AFTER ---\n")
-        call_command('showmigrations', stdout=output)
-        
-        # 3. Force add columns using raw SQL for store_payment
-        with connection.cursor() as cursor:
-            try:
-                cursor.execute('ALTER TABLE store_payment ADD COLUMN IF NOT EXISTS payment_reference VARCHAR(200);')
-                cursor.execute('ALTER TABLE store_payment ADD COLUMN IF NOT EXISTS payment_screenshot VARCHAR(100);')
-                cursor.execute('ALTER TABLE store_payment ADD COLUMN IF NOT EXISTS verified_at TIMESTAMP WITH TIME ZONE;')
-                output.write("\nRaw SQL store_payment column additions attempted.")
-            except Exception as sql_e:
-                output.write(f"\nRaw SQL store_payment failed: {str(sql_e)}")
-                
         return HttpResponse(f"Migration tool finished.<br><pre>{output.getvalue()}</pre>")
     except Exception as e:
         import traceback

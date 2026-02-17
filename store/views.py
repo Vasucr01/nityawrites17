@@ -15,20 +15,25 @@ from django.db.utils import OperationalError
 
 def home(request):
     """Display all books on the homepage"""
-    try:
-        books = Book.objects.filter(stock__gt=0)
-        about = AboutSection.objects.filter(is_active=True).first()
-        social_links = SocialMedia.objects.filter(is_active=True)
-    except OperationalError:
-        books = []
-        about = None
-        social_links = []
+    # try:
+    #     books = Book.objects.filter(stock__gt=0)
+    #     about = AboutSection.objects.filter(is_active=True).first()
+    #     social_links = SocialMedia.objects.filter(is_active=True)
+    # except OperationalError:
+    #     books = []
+    #     about = None
+    #     social_links = []
+    
+    # DUMMY DATA FOR VERIFICATION
+    books = []
+    about = None
+    social_links = []
     
     return render(request, 'store/index.html', {
         'books': books,
         'about': about,
         'social_links': social_links,
-        'db_error': not bool(books) and not bool(about) # Simple flag for template
+        'db_error': True 
     })
 
 

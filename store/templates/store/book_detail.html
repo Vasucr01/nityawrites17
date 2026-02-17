@@ -3,6 +3,38 @@
 
 {% block title %}{{ book.title }} - Nityawrites{% endblock %}
 
+{% block seo_title %}{{ book.title }} by {{ book.author }} | Nityawrites{% endblock %}
+{% block seo_description %}{{ book.description|truncatewords:25 }}{% endblock %}
+
+{% block og_title %}{{ book.title }} - Buy Online at Nityawrites{% endblock %}
+{% block og_description %}{{ book.description|truncatewords:20 }}{% endblock %}
+{% if book.image %}
+  {% block og_image %}{{ book.image.url }}{% endblock %}
+{% endif %}
+
+{% block extra_css %}
+<!-- Structured Data for Google -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org/",
+  "@type": "Book",
+  "name": "{{ book.title }}",
+  "author": {
+    "@type": "Person",
+    "name": "{{ book.author }}"
+  },
+  "description": "{{ book.description|truncatewords:50|escapejs }}",
+  "image": "{{ request.scheme }}://{{ request.get_host }}{{ book.image.url }}",
+  "offers": {
+    "@type": "Offer",
+    "price": "{{ book.price }}",
+    "priceCurrency": "INR",
+    "availability": "https://schema.org/{% if book.stock > 0 %}InStock{% else %}OutOfStock{% endif %}"
+  }
+}
+</script>
+{% endblock %}
+
 {% block content %}
 <!-- HERO -->
 <section class="hero">

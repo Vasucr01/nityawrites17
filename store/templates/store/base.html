@@ -4,10 +4,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="google-site-verification" content="VAW14hh6TbS6AE1v15MLxDT_PiWQPd9WRD8PNdEdquE" />
+  
+  <!-- Primary Meta Tags -->
   <title>{% block title %}Nityawrites - Online Bookstore{% endblock %}</title>
+  <meta name="title" content="{% block seo_title %}Nityawrites - Online Bookstore{% endblock %}">
+  <meta name="description" content="{% block seo_description %}Discover stories that touch the heart. Nityawrites offers a curated collection of books by independent authors, poetry, and storytelling that lingers forever.{% endblock %}">
+  <meta name="author" content="Nitya Bhambhani">
+  <meta name="keywords" content="books, online bookstore, independent author, Nityawrites, poetry, storytelling, buy books online India">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ request.build_absolute_uri }}">
+  <meta property="og:title" content="{% block og_title %}Nityawrites - Online Bookstore{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}Discover stories that touch the heart at Nityawrites.{% endblock %}">
+  <meta property="og:image" content="{% block og_image %}{% static 'images/og-image-v1.jpg' %}{% endblock %}">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="{{ request.build_absolute_uri }}">
+  <meta property="twitter:title" content="{% block tw_title %}Nityawrites - Online Bookstore{% endblock %}">
+  <meta property="twitter:description" content="{% block tw_description %}Discover stories that touch the heart at Nityawrites.{% endblock %}">
+  <meta property="twitter:image" content="{% block tw_image %}{% static 'images/og-image-v1.jpg' %}{% endblock %}">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="{% static 'favicon.png' %}">
 
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@300;400;500&family=Outfit:wght@400;600&display=swap" rel="stylesheet">
 
   <!-- CSS -->
   <link rel="stylesheet" href="{% static 'style.css' %}?v=2.0">

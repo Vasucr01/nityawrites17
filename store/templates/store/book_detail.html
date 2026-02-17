@@ -104,7 +104,7 @@
       <h2 style="margin: 0; font-size: 2rem;">Reader Reviews</h2>
       <div style="font-size: 1.1rem; color: var(--mocha);">
         {% if reviews %}
-          <span style="color: #FFD700;">★</span> {{ avg_rating|floatformat:1 }} / 5.0 ({{ reviews.count }} reviews)
+          {{ reviews.count }} Reviews
         {% else %}
           No reviews yet
         {% endif %}
@@ -114,13 +114,8 @@
     <div class="reviews-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 60px;">
       {% for review in reviews %}
         <div class="review-card" style="background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #f0ece8;">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-            <strong style="color: var(--coffee_brown);">{{ review.name }}</strong>
-            <div style="color: #FFD700;">
-              {% for i in "12345" %}
-                {% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}
-              {% endfor %}
-            </div>
+          <div style="margin-bottom: 10px;">
+            <strong style="color: var(--coffee-brown);">{{ review.name }}</strong>
           </div>
           <p style="font-size: 0.95rem; color: #555; font-style: italic; line-height: 1.6;">"{{ review.comment }}"</p>
           <small style="color: #999; display: block; margin-top: 15px;">{{ review.created_at|date:"M d, Y" }}</small>
@@ -141,18 +136,6 @@
           <div>
             <label style="display: block; margin-bottom: 8px; font-weight: 500;">Your Name</label>
             <input type="text" name="name" required placeholder="John Doe" style="margin-bottom: 0; width: 100%; padding: 12px; border: 2px solid var(--warm-tan); border-radius: 10px;">
-          </div>
-          <div>
-            <label style="display: block; margin-bottom: 15px; font-weight: 600; color: var(--coffee-brown);">Rate this book</label>
-            <div class="star-rating-container">
-              <div class="star-rating">
-                <input type="radio" name="rating" value="5" id="5-stars" required><label for="5-stars">★</label>
-                <input type="radio" name="rating" value="4" id="4-stars"><label for="4-stars">★</label>
-                <input type="radio" name="rating" value="3" id="3-stars"><label for="3-stars">★</label>
-                <input type="radio" name="rating" value="2" id="2-stars"><label for="2-stars">★</label>
-                <input type="radio" name="rating" value="1" id="1-star"><label for="1-star">★</label>
-              </div>
-            </div>
           </div>
         </div>
         <div style="margin-bottom: 25px;">

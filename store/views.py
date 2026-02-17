@@ -51,16 +51,16 @@ def submit_review(request, pk):
         rating = request.POST.get('rating')
         comment = request.POST.get('comment')
         
-        if name and rating and comment:
+        if name and comment:
             Review.objects.create(
                 book=book,
                 name=name,
-                rating=int(rating),
+                rating=5,  # Default fallback
                 comment=comment
             )
             messages.success(request, 'Thank you for your review!')
         else:
-            messages.error(request, 'Please fill in all fields.')
+            messages.error(request, 'Please fill in both name and comments.')
             
     return redirect('book_detail', pk=pk)
 

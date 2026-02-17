@@ -348,43 +348,6 @@ textarea {
   background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
 }
 
-/* Star Rating Enhancement */
-.star-rating-container {
-  display: inline-block;
-  background: #fdfaf7;
-  padding: 10px 20px;
-  border-radius: 15px;
-  border: 1px solid #f0ece8;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
-}
-
-.star-rating {
-  display: flex;
-  flex-direction: row-reverse;
-  justify-content: center;
-  gap: 12px;
-}
-
-.star-rating input {
-  display: none;
-}
-
-.star-rating label {
-  font-size: 38px;
-  color: #e0e0e0;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  line-height: 1;
-}
-
-.star-rating label:hover,
-.star-rating label:hover~label,
-.star-rating input:checked~label {
-  color: #FFB300;
-  transform: scale(1.15);
-  text-shadow: 0 0 10px rgba(255, 179, 0, 0.2);
-}
-
 .review-card {
   transition: 0.3s ease;
   border: 1px solid #f0ece8;
@@ -451,15 +414,6 @@ textarea {
     text-align: left;
   }
 
-  .star-rating-container {
-    width: 100%;
-    text-align: center;
-  }
-
-  .star-rating {
-    justify-content: center;
-  }
-
   .footer-container {
     grid-template-columns: 1fr;
     text-align: center;
@@ -495,4 +449,8 @@ textarea {
 
 html {
   scroll-behavior: smooth;
+}
+
+body {
+  overflow-x: hidden;
 }

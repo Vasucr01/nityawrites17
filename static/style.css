@@ -280,24 +280,22 @@ textarea {
   border-top: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* ================= RESPONSIVE GRIDS ================= */
-
+/* ================= RESPONSIVE GRIDS (Desktop) ================= */
 .about-grid,
 .book-detail-grid {
   display: grid;
-  gap: 40px;
+  gap: 50px;
   align-items: start;
   max-width: 1100px;
   margin: 0 auto;
 }
 
-/* Desktop default */
 .about-grid {
   grid-template-columns: 1fr 2fr;
 }
 
 .book-detail-grid {
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1.5fr;
 }
 
 .decorative-divider {
@@ -308,17 +306,9 @@ textarea {
   letter-spacing: 5px;
 }
 
-/* ================= BOOK DETAIL REFINEMENTS ================= */
-.book-detail-grid {
-  display: grid;
-  grid-template-columns: 1fr 1.5fr;
-  gap: 50px;
-  align-items: start;
-}
-
+/* ================= BOOK DETAIL COMPONENTS ================= */
 .image-wrapper {
-  max-width: 400px;
-  /* Limits size on desktop */
+  max-width: 420px;
   margin: 0 auto;
   border-radius: 15px;
   overflow: hidden;
@@ -326,48 +316,28 @@ textarea {
   transition: transform 0.3s ease;
 }
 
-.image-wrapper:hover {
-  transform: translateY(-5px);
-}
-
 .image-wrapper img {
   width: 100%;
   display: block;
 }
 
-.image-placeholder {
-  width: 100%;
-  aspect-ratio: 2/3;
-  max-width: 400px;
-  background: linear-gradient(135deg, #f5f1ed, #e8dfd6);
-  border-radius: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #7a5c4d;
-  font-size: 24px;
-}
-
-/* Icon-only share buttons */
 .share-icon {
-  width: 45px;
-  height: 45px;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
   color: white;
   text-decoration: none;
-  font-size: 20px;
+  font-size: 22px;
   transition: all 0.3s ease;
   border: none;
   cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .share-icon:hover {
   transform: translateY(-3px) scale(1.1);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
 }
 
 .share-icon.whatsapp {
@@ -375,14 +345,15 @@ textarea {
 }
 
 .share-icon.instagram {
-  background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
 }
 
-/* Star Rating Selector */
+/* Star Rating Enhancement */
 .star-rating {
   display: flex;
   flex-direction: row-reverse;
   justify-content: flex-end;
+  gap: 10px;
 }
 
 .star-rating input {
@@ -390,190 +361,117 @@ textarea {
 }
 
 .star-rating label {
-  font-size: 30px;
-  color: #ddd;
+  font-size: 36px;
+  color: #e0e0e0;
   cursor: pointer;
-  transition: color 0.2s ease-in-out;
-  padding: 0 2px;
+  transition: color 0.15s ease, transform 0.15s ease;
 }
 
 .star-rating label:hover,
 .star-rating label:hover~label,
 .star-rating input:checked~label {
-  color: #FFD700;
+  color: #FFB300;
+  transform: scale(1.1);
 }
 
-/* ================= MOBILE ================= */
+.review-card {
+  transition: 0.3s ease;
+  border: 1px solid #f0ece8;
+}
 
+.review-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--warm-tan) !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+
+/* ================= MOBILE VIEW (Max 768px) ================= */
 @media (max-width: 768px) {
-  .book-detail-grid {
+  section {
+    padding: 40px 15px;
+  }
+
+  section h2 {
+    font-size: 1.8rem;
+  }
+
+  .nav-toggle {
+    display: flex;
+  }
+
+  .nav-menu {
+    position: fixed;
+    right: -100%;
+    top: 60px;
+    flex-direction: column;
+    background: linear-gradient(135deg, var(--coffee-brown), var(--dark-brown));
+    width: 75%;
+    max-width: 300px;
+    height: 100vh;
+    text-align: center;
+    transition: right 0.3s ease;
+    padding: 30px 0;
+    gap: 15px;
+    z-index: 999;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+  }
+
+  .nav-menu.active {
+    right: 0;
+  }
+
+  .book-grid {
     grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .about-grid,
+  .book-detail-grid {
+    grid-template-columns: 1fr !important;
     gap: 30px;
+    text-align: center;
   }
 
   .image-wrapper {
     max-width: 100%;
   }
+
+  .book-info {
+    text-align: left;
+  }
+
+  .footer-container {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .footer-social {
+    justify-content: center;
+  }
+
+  .newsletter-form {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .newsletter-form input {
+    margin-right: 0 !important;
+  }
+
+  .hero {
+    padding: 50px 15px;
+  }
+
+  .hero h1 {
+    font-size: 2.2rem;
+  }
 }
 
-/* ================= SMOOTH SCROLL ================= */
-
-html {
-  scroll-behavior: smooth;
-}
-
-/* NAV */
-.nav-toggle {
-  display: flex;
-}
-
-.nav-container {
-  padding: 12px 15px;
-}
-
-.nav-menu {
-  position: fixed;
-  right: -100%;
-  top: 60px;
-  flex-direction: column;
-  background: linear-gradient(135deg, var(--coffee-brown), var(--dark-brown));
-  width: 75%;
-  max-width: 300px;
-  height: 100vh;
-  text-align: center;
-  transition: right 0.3s ease;
-  box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
-  padding: 30px 0;
-  gap: 20px;
-  z-index: 999;
-}
-
-.nav-menu.active {
-  right: 0;
-}
-
-.logo-text {
-  font-size: 1.3rem;
-}
-
-/* HERO */
-.hero {
-  padding: 40px 15px;
-}
-
-.hero h1 {
-  font-size: 2.2rem;
-}
-
-/* GRID */
-.book-grid {
-  grid-template-columns: 1fr;
-  gap: 20px;
-  padding: 0 15px;
-}
-
-/* SECTIONS */
-section h2 {
-  font-size: 1.8rem;
-}
-
-section {
-  padding: 40px 15px;
-}
-
-/* FORM */
-form {
-  padding: 20px;
-}
-
-/* FOOTER */
-.footer-container {
-  grid-template-columns: 1fr;
-  gap: 25px;
-}
-
-.footer-section {
-  text-align: center;
-}
-
-.footer-social {
-  justify-content: center;
-}
-
-/* Responsive Stacking */
-.about-grid,
-.book-detail-grid {
-  grid-template-columns: 1fr !important;
-  gap: 30px;
-  text-align: center;
-}
-
-.about-grid div,
-.book-detail-grid div {
-  text-align: center !important;
-}
-
-.about-grid img,
-.book-detail-grid img {
-  max-width: 100%;
-  margin: 0 auto;
-}
-
-.newsletter-form {
-  flex-direction: column !important;
-  gap: 10px;
-}
-
-.newsletter-form input {
-  margin-right: 0 !important;
-}
-
-
-
-/* ================= SOCIAL SHARING ================= */
-.share-btn {
-  display: inline-flex;
-  align-items: center;
-  padding: 8px 18px;
-  color: white;
-  text-decoration: none;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.share-btn:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.1);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-}
-
-/* ================= REVIEWS ================= */
-.review-card {
-  transition: 0.3s ease;
-}
-
-.review-card:hover {
-  transform: scale(1.02);
-  border-color: var(--warm-tan) !important;
-}
-
-.review-form-container select:focus,
-.review-form-container input:focus,
-.review-form-container textarea:focus {
-  outline: none;
-  border-color: var(--coffee-brown);
-  background: white;
-}
-
+/* Utilities */
 .btn-secondary {
   background: var(--mocha) !important;
+  color: white;
 }
-
-/* ================= SMOOTH SCROLL ================= */
-
 
 html {
   scroll-behavior: smooth;

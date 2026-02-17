@@ -349,11 +349,20 @@ textarea {
 }
 
 /* Star Rating Enhancement */
+.star-rating-container {
+  display: inline-block;
+  background: #fdfaf7;
+  padding: 10px 20px;
+  border-radius: 15px;
+  border: 1px solid #f0ece8;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
 .star-rating {
   display: flex;
   flex-direction: row-reverse;
-  justify-content: flex-end;
-  gap: 10px;
+  justify-content: center;
+  gap: 12px;
 }
 
 .star-rating input {
@@ -361,17 +370,19 @@ textarea {
 }
 
 .star-rating label {
-  font-size: 36px;
+  font-size: 38px;
   color: #e0e0e0;
   cursor: pointer;
-  transition: color 0.15s ease, transform 0.15s ease;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  line-height: 1;
 }
 
 .star-rating label:hover,
 .star-rating label:hover~label,
 .star-rating input:checked~label {
   color: #FFB300;
-  transform: scale(1.1);
+  transform: scale(1.15);
+  text-shadow: 0 0 10px rgba(255, 179, 0, 0.2);
 }
 
 .review-card {
@@ -438,6 +449,15 @@ textarea {
 
   .book-info {
     text-align: left;
+  }
+
+  .star-rating-container {
+    width: 100%;
+    text-align: center;
+  }
+
+  .star-rating {
+    justify-content: center;
   }
 
   .footer-container {

@@ -15,6 +15,10 @@ from django.db.utils import OperationalError
 
 def home(request):
     """Display all books on the homepage"""
+    try:
+        books = Book.objects.all()
+        about = AboutSection.objects.filter(is_active=True).first()
+        social_links = SocialMedia.objects.filter(is_active=True)
     except (OperationalError, Exception) as e:
         # Catch ProgrammingError (missing tables) and other DB issues
         books = []
@@ -25,13 +29,12 @@ def home(request):
     else:
         db_error_msg = None
         
-    db_error = not books and not about and not social_links
-    
     return render(request, 'store/index.html', {
         'books': books,
         'about': about,
         'social_links': social_links,
-        'db_error': False  # Default to False since we now attempt connection
+        'db_error_msg': db_error_msg,
+        'db_error': bool(db_error_msg)
     })
 
 

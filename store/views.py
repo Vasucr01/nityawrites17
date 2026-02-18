@@ -508,16 +508,31 @@ def admin_order_fail(request, pk):
 
 
 def test_email_view(request):
-    """Deep debug for email with optional order ID and order listing"""
+    """Deep debug for email with environment variable verification"""
     if not request.user.is_staff:
         return HttpResponse("Unauthorized - Please login to admin first", status=403)
     
     from django.utils import timezone
+    import os
+    
+    # Check environment variables
+    email_user = os.environ.get('EMAIL_HOST_USER')
+    email_pass = os.environ.get('EMAIL_HOST_PASSWORD')
+    
+    env_status = f"""
+    <h3>Email Environment Status:</h3>
+    <ul>
+        <li>EMAIL_HOST_USER: {'✅ Set' if email_user else '❌ NOT SET'} ({email_user if email_user else 'None'})</li>
+        <li>EMAIL_HOST_PASSWORD: {'✅ Set' if email_pass else '❌ NOT SET'} ({'********' if email_pass else 'None'})</li>
+    </ul>
+    <hr>
+    """
+
     order_id = request.GET.get('order_id')
     try:
         if order_id == 'list':
             orders = Order.objects.all().order_by('-created_at')[:10]
-            output = "<h2>Recent Orders</h2><ul>"
+            output = env_status + "<h2>Recent Orders</h2><ul>"
             for o in orders:
                 output += f"<li>ID: {o.order_id} | Email: {o.email} | Status: {o.payment_status} | Created: {o.created_at}</li>"
             output += "</ul><p>Use ?order_id=ID to test a specific order.</p>"
@@ -526,19 +541,19 @@ def test_email_view(request):
         if order_id:
             order = get_object_or_404(Order, order_id=order_id)
             send_order_confirmation_email(order)
-            return HttpResponse(f"REAL Order Confirmation sent for {order_id} to {order.email} (and BCC to owner)!")
+            return HttpResponse(env_status + f"REAL Order Confirmation sent for {order_id} to {order.email} (and BCC to owner)!")
         else:
             send_mail(
                 'Simple Test Email',
-                f'SMTP is working! Checked at {timezone.now()} 📚✨',
+                f'SMTP is working! Checked at {timezone.now()} 📚✨\n\nEnvironment verification:\nUSER: {email_user}\nPASS: ********',
                 settings.DEFAULT_FROM_EMAIL,
                 [settings.DEFAULT_FROM_EMAIL],
                 fail_silently=False,
             )
-            return HttpResponse(f"Simple Test Email sent to {settings.DEFAULT_FROM_EMAIL}!")
+            return HttpResponse(env_status + f"Simple Test Email sent to {settings.DEFAULT_FROM_EMAIL}!")
     except Exception as e:
         import traceback
-        return HttpResponse(f"DEBUG FAILED: {str(e)}<br><pre>{traceback.format_exc()}</pre>")
+        return HttpResponse(env_status + f"DEBUG FAILED: {str(e)}<br><pre>{traceback.format_exc()}</pre>")
 
 def create_admin(request):
     """Temporary view to create a superuser for management"""

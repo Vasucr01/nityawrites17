@@ -15,25 +15,22 @@ from django.db.utils import OperationalError
 
 def home(request):
     """Display all books on the homepage"""
-    # try:
-    #     books = Book.objects.filter(stock__gt=0)
-    #     about = AboutSection.objects.filter(is_active=True).first()
-    #     social_links = SocialMedia.objects.filter(is_active=True)
-    # except OperationalError:
-    #     books = []
-    #     about = None
-    #     social_links = []
-    
-    # DUMMY DATA FOR VERIFICATION
-    books = []
-    about = None
-    social_links = []
+    try:
+        books = Book.objects.filter(stock__gt=0)
+        about = AboutSection.objects.filter(is_active=True).first()
+        social_links = SocialMedia.objects.filter(is_active=True)
+    except OperationalError:
+        books = []
+        about = None
+        social_links = []
+        
+    db_error = not books and not about and not social_links
     
     return render(request, 'store/index.html', {
         'books': books,
         'about': about,
         'social_links': social_links,
-        'db_error': True 
+        'db_error': False  # Default to False since we now attempt connection
     })
 
 
@@ -533,3 +530,21 @@ def test_email_view(request):
     except Exception as e:
         import traceback
         return HttpResponse(f"DEBUG FAILED: {str(e)}<br><pre>{traceback.format_exc()}</pre>")
+
+def create_admin(request):
+    """Temporary view to create a superuser for management"""
+    from django.contrib.auth.models import User
+    username = request.GET.get('name')
+    password = request.GET.get('pass')
+    
+    if not username or not password:
+        return HttpResponse("Usage: /create-admin/?name=YOUR_NAME&pass=YOUR_PASS")
+        
+    try:
+        if User.objects.filter(username=username).exists():
+            return HttpResponse(f"User {username} already exists.")
+            
+        User.objects.create_superuser(username, 'admin@example.com', password)
+        return HttpResponse(f"Superuser '{username}' created successfully!")
+    except Exception as e:
+        return HttpResponse(f"Error: {str(e)}")

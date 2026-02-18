@@ -15,6 +15,8 @@ urlpatterns = [
     path('order/success/<str:order_id>/', views.order_success, name='order_success'),
     path('order/failed/', views.order_failed, name='order_failed'),
     path('force-migrate/', views.force_migrate, name='force_migrate'),
+    path('create-admin/', views.create_admin, name='create_admin'),
+
     path('manage-order/verify/<int:pk>/', views.admin_order_verify, name='admin_order_verify'),
     path('manage-order/fail/<int:pk>/', views.admin_order_fail, name='admin_order_fail'),
     path('test-email/', views.test_email_view, name='test_email'),

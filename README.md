@@ -1,4 +1,4 @@
-# Nityawrites.com - Django Online Bookstore
+nityawrites.com - Django Online Bookstore
 
 A fully functional Django-based online bookstore for selling books with UPI payment integration, email confirmations, and admin management.
 

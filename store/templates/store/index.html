@@ -10,15 +10,12 @@
 {% block og_description %}Discover a curated collection of books and stories at Nityawrites.{% endblock %}
 
 {% block content %}
-<div style="background: red; color: white; text-align: center; padding: 15px; font-weight: bold; font-size: 1.2rem; z-index: 9999; position: relative; border-bottom: 2px solid white;">
-    🚀 TEST BUILD: v7.0 - NEW UPDATE ACTIVE (Stars Removed)
-</div>
 
 <!-- HERO SECTION -->
 <section class="hero">
   <div class="hero-content">
     <h1>Nityawrites ✦</h1>
-    <p class="tagline">Stories that touch the heart, words that linger forever (v7.0 - Stars Removed)</p>
+    <p class="tagline">Stories that touch the heart, words that linger forever</p>
     <a href="#books" class="btn">Explore Books</a>
   </div>
 </section>
@@ -115,15 +112,7 @@
     <div style="text-align: center; padding: 60px 20px; background: white; border-radius: 20px; max-width: 600px; margin: 0 auto; box-shadow: 0 8px 30px rgba(111, 78, 55, 0.15);">
       <p style="font-size: 1.2rem; color: var(--mocha); margin-bottom: 20px;">📚 No books available at the moment.</p>
       
-      {% if db_error_msg %}
-        <div style="background: #fff4f4; border-left: 5px solid #ff4d4d; padding: 15px; margin-top: 20px; text-align: left; font-family: monospace; font-size: 0.9rem;">
-            <strong>Database Status:</strong> Missing Tables Detected.<br>
-            <strong>Error:</strong> {{ db_error_msg }}<br><br>
-            <a href="/repair-db/" style="color: #ff4d4d; text-decoration: underline; font-weight: bold;">Click here to run the Auto-Repair Tool</a>
-        </div>
-      {% else %}
-        <p style="color: #666;">Please check back later for new releases!</p>
-      {% endif %}
+      <p style="color: #666;">Please check back later for new releases!</p>
     </div>
   {% endif %}
 </section>

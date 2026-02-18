@@ -25,16 +25,6 @@ def home(request):
         about = None
         social_links = []
         db_error_msg = str(e)
-        
-        # Add host info to debug
-        from django.db import connection
-        try:
-            db_host = connection.settings_dict.get('HOST', 'Unknown')
-            db_user = connection.settings_dict.get('USER', 'Unknown')
-            db_error_msg = f"{db_error_msg} (Attempting to connect to host: {db_host} as user: {db_user})"
-        except:
-            pass
-            
         print(f"DB Error in home: {e}")
     else:
         db_error_msg = None

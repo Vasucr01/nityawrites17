@@ -15,16 +15,15 @@ from django.db.utils import OperationalError
 
 def home(request):
     """Display all books on the homepage"""
-    try:
-        books = Book.objects.all()
-        about = AboutSection.objects.filter(is_active=True).first()
-        social_links = SocialMedia.objects.filter(is_active=True)
     except (OperationalError, Exception) as e:
         # Catch ProgrammingError (missing tables) and other DB issues
         books = []
         about = None
         social_links = []
+        db_error_msg = str(e)
         print(f"DB Error in home: {e}")
+    else:
+        db_error_msg = None
         
     db_error = not books and not about and not social_links
     
@@ -581,22 +580,32 @@ def repair_db(request):
     """Powerful tool to force-reapply migrations if they are out of sync"""
     import io
     from django.core.management import call_command
+    from django.db import connection
     output = io.StringIO()
     try:
-        output.write("--- ATTEMPTING DB REPAIR ---\n")
+        output.write("--- DATABASE REPAIR START ---\n")
         
-        # 1. Try to fake-backwards and re-run migrations for the store app
-        output.write("Checking store migrations...\n")
+        # Check current tables
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname = 'public'")
+            tables = [row[0] for row in cursor.fetchall()]
+            output.write(f"Before repair, found tables: {', '.join(tables)}\n\n")
+
+        # 1. Reset migration history for store (marking them as NOT applied)
+        output.write("Step 1: Resetting store migration history (faking)... \n")
         call_command('migrate', 'store', 'zero', '--fake', no_input=True, stdout=output)
         
-        # USE --fake-initial so it skips tables that already exist (like store_book)
+        # 2. Try to apply migrations. Using --fake-initial to skip existing tables like store_book.
+        output.write("\nStep 2: Re-applying migrations with --fake-initial... \n")
         call_command('migrate', 'store', '--fake-initial', no_input=True, stdout=output)
         
-        # 2. Sync everything else
-        output.write("\nSyncing other apps...\n")
-        call_command('migrate', no_input=True, stdout=output)
-        
-        return HttpResponse(f"Repair finished.<br><pre>{output.getvalue()}</pre>")
+        # 3. Final Check
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname = 'public'")
+            tables_after = [row[0] for row in cursor.fetchall()]
+            output.write(f"\nFinal tables in DB: {', '.join(tables_after)}\n")
+
+        return HttpResponse(f"Repair process finished. Check output below:<br><pre>{output.getvalue()}</pre>")
     except Exception as e:
         import traceback
-        return HttpResponse(f"Repair failed: {str(e)}<br><pre>{traceback.format_exc()}</pre>", status=500)
+        return HttpResponse(f"Repair FATAL ERROR: {str(e)}<br><pre>{traceback.format_exc()}</pre>", status=500)

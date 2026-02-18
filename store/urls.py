@@ -14,9 +14,10 @@ urlpatterns = [
     path('payment/callback/', views.payment_callback, name='payment_callback'),
     path('order/success/<str:order_id>/', views.order_success, name='order_success'),
     path('order/failed/', views.order_failed, name='order_failed'),
-    path('force-migrate/', views.force_migrate, name='force_migrate'),
     path('create-admin/', views.create_admin, name='create_admin'),
     path('db-check/', views.db_check, name='db_check'),
+    path('repair-db/', views.repair_db, name='repair_db'),
+
 
 
     path('manage-order/verify/<int:pk>/', views.admin_order_verify, name='admin_order_verify'),

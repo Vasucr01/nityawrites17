@@ -19,10 +19,12 @@ def home(request):
         books = Book.objects.all()
         about = AboutSection.objects.filter(is_active=True).first()
         social_links = SocialMedia.objects.filter(is_active=True)
-    except OperationalError:
+    except (OperationalError, Exception) as e:
+        # Catch ProgrammingError (missing tables) and other DB issues
         books = []
         about = None
         social_links = []
+        print(f"DB Error in home: {e}")
         
     db_error = not books and not about and not social_links
     
@@ -574,3 +576,25 @@ def db_check(request):
     """
     return HttpResponse(output)
 
+
+def repair_db(request):
+    """Powerful tool to force-reapply migrations if they are out of sync"""
+    import io
+    from django.core.management import call_command
+    output = io.StringIO()
+    try:
+        output.write("--- ATTEMPTING DB REPAIR ---\n")
+        
+        # 1. Try to fake-backwards and re-run migrations for the store app
+        output.write("Checking store migrations...\n")
+        call_command('migrate', 'store', 'zero', '--fake', no_input=True, stdout=output)
+        call_command('migrate', 'store', no_input=True, stdout=output)
+        
+        # 2. Sync everything else
+        output.write("\nSyncing other apps...\n")
+        call_command('migrate', no_input=True, stdout=output)
+        
+        return HttpResponse(f"Repair finished.<br><pre>{output.getvalue()}</pre>")
+    except Exception as e:
+        import traceback
+        return HttpResponse(f"Repair failed: {str(e)}<br><pre>{traceback.format_exc()}</pre>", status=500)

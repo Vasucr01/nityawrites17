@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -80,6 +81,10 @@ WSGI_APPLICATION = 'nityawrites.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+
+# Database
+# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+
 import dj_database_url
 
 DATABASES = {
@@ -89,12 +94,44 @@ DATABASES = {
     }
 }
 
-database_url = os.environ.get("DATABASE_URL")
+
+# Check multiple common names for the database URL
+database_url = (
+    os.environ.get("DATABASE_URL") or 
+    os.environ.get("POSTGRES_URL") or 
+    os.environ.get("POSTGRES_PRISMA_URL") or 
+    os.environ.get("POSTGRES_URL_NON_POOLING")
+)
+
+
 if database_url:
+    # Clean up the URL: remove surrounding quotes and whitespace
+    database_url = database_url.strip().strip("'").strip('"')
+    
+    # Handle accidental copy-paste of 'psql' command from Neon dashboard
+    if database_url.startswith("psql "):
+        database_url = database_url.replace("psql ", "", 1).strip().strip("'").strip('"')
+    
     DATABASES["default"] = dj_database_url.parse(database_url)
     DATABASES["default"]["OPTIONS"] = {
-        "sslmode": "require",  # Enabled for Vercel/Neon Postgres
+        "sslmode": "require",
     }
+    # Parse the URL
+    db_config = dj_database_url.parse(database_url)
+    
+    # CRITICAL CHECK: Ensure it's not falling back to SQLite
+    if db_config.get('ENGINE') == 'django.db.backends.sqlite3':
+        env_keys = ", ".join(list(os.environ.keys()))
+        raise ValueError(f"CRITICAL: Database URL parsed as SQLite! This means the URL was invalid or empty. Raw URL: '{database_url}'. Available Env Vars: [{env_keys}]")
+
+    DATABASES["default"] = db_config
+    DATABASES["default"]["OPTIONS"] = {
+        "sslmode": "require",
+    }
+else:
+    # force failure to see what's going on
+    env_keys = ", ".join(list(os.environ.keys()))
+    raise ValueError(f"CRITICAL: No DATABASE_URL found! I checked: DATABASE_URL, POSTGRES_URL, etc. Available Env Vars: [{env_keys}]")
 
 
 # Password validation
@@ -179,6 +216,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'nityawrites17@gmail.com'
-EMAIL_HOST_PASSWORD = 'uelxszghrlvbcuvf'  # New App Password
-DEFAULT_FROM_EMAIL = 'Nityawrites <nityawrites17@gmail.com>'
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = f'Nityawrites <{EMAIL_HOST_USER}>'
+

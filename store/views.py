@@ -16,7 +16,7 @@ from django.db.utils import OperationalError
 def home(request):
     """Display all books on the homepage"""
     try:
-        books = Book.objects.filter(stock__gt=0)
+        books = Book.objects.all()
         about = AboutSection.objects.filter(is_active=True).first()
         social_links = SocialMedia.objects.filter(is_active=True)
     except OperationalError:
@@ -443,9 +443,10 @@ def force_migrate(request):
     from django.db import connection
     output = io.StringIO()
     try:
-        # 1. Try standard migration
-        output.write("--- RUNNING MIGRATE ---\n")
-        call_command('migrate', no_input=True, stdout=output)
+        # 2. Sync report
+        from .models import Book
+        book_count = Book.objects.count()
+        output.write(f"\n--- SYNC REPORT ---\nBooks found in DB: {book_count}\n")
         
         return HttpResponse(f"Migration tool finished.<br><pre>{output.getvalue()}</pre>")
     except Exception as e:

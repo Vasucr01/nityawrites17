@@ -119,19 +119,10 @@ if database_url:
     # Parse the URL
     db_config = dj_database_url.parse(database_url)
     
-    # CRITICAL CHECK: Ensure it's not falling back to SQLite
-    if db_config.get('ENGINE') == 'django.db.backends.sqlite3':
-        env_keys = ", ".join(list(os.environ.keys()))
-        raise ValueError(f"CRITICAL: Database URL parsed as SQLite! This means the URL was invalid or empty. Raw URL: '{database_url}'. Available Env Vars: [{env_keys}]")
-
-    DATABASES["default"] = db_config
-    DATABASES["default"]["OPTIONS"] = {
-        "sslmode": "require",
-    }
-else:
-    # force failure to see what's going on
-    env_keys = ", ".join(list(os.environ.keys()))
-    raise ValueError(f"CRITICAL: No DATABASE_URL found! I checked: DATABASE_URL, POSTGRES_URL, etc. Available Env Vars: [{env_keys}]")
+elif not DEBUG:
+    # If we are in production (DEBUG=False) and no database is configured, 
+    # we should warn because SQLite won't work on Vercel's read-only FS.
+    print("WARNING: No DATABASE_URL found in production. SQLite fallback will likely fail on Vercel.")
 
 
 # Password validation

@@ -443,6 +443,10 @@ def force_migrate(request):
     from django.db import connection
     output = io.StringIO()
     try:
+        # 1. Try standard migration
+        output.write("--- RUNNING MIGRATE ---\n")
+        call_command('migrate', no_input=True, stdout=output)
+
         # 2. Sync report
         from .models import Book
         book_count = Book.objects.count()

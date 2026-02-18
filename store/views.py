@@ -583,7 +583,7 @@ def repair_db(request):
     """Aggressive self-healing tool for out-of-sync database schemas"""
     import io
     from django.core.management import call_command
-    from django.db import connection, transaction
+    from django.db import connection
     output = io.StringIO()
     
     def table_exists(table_name):
@@ -591,8 +591,18 @@ def repair_db(request):
             cursor.execute("SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = %s)", [table_name])
             return cursor.fetchone()[0]
 
+    def column_exists(table_name, column_name):
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT EXISTS (
+                    SELECT FROM information_schema.columns 
+                    WHERE table_name = %s AND column_name = %s
+                )
+            """, [table_name, column_name])
+            return cursor.fetchone()[0]
+
     try:
-        output.write("--- SURGICAL REPAIR START ---\n")
+        output.write("--- MASTER SURGICAL REPAIR START ---\n")
         
         # 1. Force clear migration history for the 'store' app to start clean
         output.write("Cleaning migration history for 'store'...\n")
@@ -600,27 +610,43 @@ def repair_db(request):
             cursor.execute("DELETE FROM django_migrations WHERE app = 'store'")
         
         # 2. Surgically Fake Migrations
-        # Check Migration 0001 (Books, Orders, etc)
+        # Migration 0001
         if table_exists('store_book'):
-            output.write("Detected 'store_book'. Faking migration 0001...\n")
+            output.write("Detected 'store_book'. Faking 0001...\n")
             call_command('migrate', 'store', '0001', '--fake', no_input=True, stdout=output)
         else:
-            output.write("Migration 0001 tables missing. Will run normally.\n")
+            output.write("0001 tables missing. Running...\n")
             call_command('migrate', 'store', '0001', no_input=True, stdout=output)
 
-        # Check Migration 0002 (AboutSection, SocialMedia)
+        # Migration 0002
         if table_exists('store_aboutsection'):
-            output.write("Detected 'store_aboutsection'. Faking migration 0002...\n")
+            output.write("Detected 'store_aboutsection'. Faking 0002...\n")
             call_command('migrate', 'store', '0002', '--fake', no_input=True, stdout=output)
         else:
-            output.write("Migration 0002 tables missing. Running now...\n")
+            output.write("0002 tables missing. Running...\n")
             call_command('migrate', 'store', '0002', no_input=True, stdout=output)
+
+        # Migration 0003 (Payment Column Changes)
+        if column_exists('store_payment', 'payment_reference'):
+            output.write("Detected 'payment_reference' column. Faking 0003...\n")
+            call_command('migrate', 'store', '0003', '--fake', no_input=True, stdout=output)
+        else:
+            output.write("0003 columns missing. Running...\n")
+            call_command('migrate', 'store', '0003', no_input=True, stdout=output)
+
+        # Migration 0004 (Reviews)
+        if table_exists('store_review'):
+            output.write("Detected 'store_review'. Faking 0004...\n")
+            call_command('migrate', 'store', '0004', '--fake', no_input=True, stdout=output)
+        else:
+            output.write("0004 table missing. Running...\n")
+            call_command('migrate', 'store', '0004', no_input=True, stdout=output)
 
         # 3. Final catch-all migrate
         output.write("\nRunning final sync for all apps...\n")
         call_command('migrate', no_input=True, stdout=output)
         
-        return HttpResponse(f"Repair process COMPLETED.<br><pre>{output.getvalue()}</pre>")
+        return HttpResponse(f"Master Repair completed.<br><pre>{output.getvalue()}</pre>")
     except Exception as e:
         import traceback
         return HttpResponse(f"Repair FATAL ERROR: {str(e)}<br><pre>{traceback.format_exc()}</pre>", status=500)

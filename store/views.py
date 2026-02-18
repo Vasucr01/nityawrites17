@@ -25,6 +25,16 @@ def home(request):
         about = None
         social_links = []
         db_error_msg = str(e)
+        
+        # Add host info to debug
+        from django.db import connection
+        try:
+            db_host = connection.settings_dict.get('HOST', 'Unknown')
+            db_user = connection.settings_dict.get('USER', 'Unknown')
+            db_error_msg = f"{db_error_msg} (Attempting to connect to host: {db_host} as user: {db_user})"
+        except:
+            pass
+            
         print(f"DB Error in home: {e}")
     else:
         db_error_msg = None
@@ -563,6 +573,8 @@ def db_check(request):
     from django.db import connection
     engine = connection.settings_dict.get('ENGINE')
     db_name = connection.settings_dict.get('NAME')
+    db_host = connection.settings_dict.get('HOST')
+    db_user = connection.settings_dict.get('USER')
     
     # Check if we are using Postgres or SQLite
     is_postgres = 'postgresql' in engine.lower()
@@ -573,8 +585,10 @@ def db_check(request):
     <h2>Database Diagnostic</h2>
     <p><strong>Status:</strong> {status}</p>
     <p><strong>Engine:</strong> {engine}</p>
-    <p><strong>Database Name/Host:</strong> {db_name}</p>
-    <p><em>If you see 'sqlite', it means Vercel is NOT seeing your POSTGRES_URL variable.</em></p>
+    <p><strong>Database Host:</strong> {db_host}</p>
+    <p><strong>Database User:</strong> {db_user}</p>
+    <p><strong>Database Name:</strong> {db_name}</p>
+    <p><em>If you see 'password authentication failed', it means your connection string in Vercel has the wrong password.</em></p>
     """
     return HttpResponse(output)
 

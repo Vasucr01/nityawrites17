@@ -588,7 +588,9 @@ def repair_db(request):
         # 1. Try to fake-backwards and re-run migrations for the store app
         output.write("Checking store migrations...\n")
         call_command('migrate', 'store', 'zero', '--fake', no_input=True, stdout=output)
-        call_command('migrate', 'store', no_input=True, stdout=output)
+        
+        # USE --fake-initial so it skips tables that already exist (like store_book)
+        call_command('migrate', 'store', '--fake-initial', no_input=True, stdout=output)
         
         # 2. Sync everything else
         output.write("\nSyncing other apps...\n")

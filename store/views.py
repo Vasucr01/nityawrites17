@@ -580,35 +580,47 @@ def db_check(request):
 
 
 def repair_db(request):
-    """Powerful tool to force-reapply migrations if they are out of sync"""
+    """Aggressive self-healing tool for out-of-sync database schemas"""
     import io
     from django.core.management import call_command
-    from django.db import connection
+    from django.db import connection, transaction
     output = io.StringIO()
+    
+    def table_exists(table_name):
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = %s)", [table_name])
+            return cursor.fetchone()[0]
+
     try:
-        output.write("--- DATABASE REPAIR START ---\n")
+        output.write("--- SURGICAL REPAIR START ---\n")
         
-        # Check current tables
+        # 1. Force clear migration history for the 'store' app to start clean
+        output.write("Cleaning migration history for 'store'...\n")
         with connection.cursor() as cursor:
-            cursor.execute("SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname = 'public'")
-            tables = [row[0] for row in cursor.fetchall()]
-            output.write(f"Before repair, found tables: {', '.join(tables)}\n\n")
-
-        # 1. Reset migration history for store (marking them as NOT applied)
-        output.write("Step 1: Resetting store migration history (faking)... \n")
-        call_command('migrate', 'store', 'zero', '--fake', no_input=True, stdout=output)
+            cursor.execute("DELETE FROM django_migrations WHERE app = 'store'")
         
-        # 2. Try to apply migrations. Using --fake-initial to skip existing tables like store_book.
-        output.write("\nStep 2: Re-applying migrations with --fake-initial... \n")
-        call_command('migrate', 'store', '--fake-initial', no_input=True, stdout=output)
-        
-        # 3. Final Check
-        with connection.cursor() as cursor:
-            cursor.execute("SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname = 'public'")
-            tables_after = [row[0] for row in cursor.fetchall()]
-            output.write(f"\nFinal tables in DB: {', '.join(tables_after)}\n")
+        # 2. Surgically Fake Migrations
+        # Check Migration 0001 (Books, Orders, etc)
+        if table_exists('store_book'):
+            output.write("Detected 'store_book'. Faking migration 0001...\n")
+            call_command('migrate', 'store', '0001', '--fake', no_input=True, stdout=output)
+        else:
+            output.write("Migration 0001 tables missing. Will run normally.\n")
+            call_command('migrate', 'store', '0001', no_input=True, stdout=output)
 
-        return HttpResponse(f"Repair process finished. Check output below:<br><pre>{output.getvalue()}</pre>")
+        # Check Migration 0002 (AboutSection, SocialMedia)
+        if table_exists('store_aboutsection'):
+            output.write("Detected 'store_aboutsection'. Faking migration 0002...\n")
+            call_command('migrate', 'store', '0002', '--fake', no_input=True, stdout=output)
+        else:
+            output.write("Migration 0002 tables missing. Running now...\n")
+            call_command('migrate', 'store', '0002', no_input=True, stdout=output)
+
+        # 3. Final catch-all migrate
+        output.write("\nRunning final sync for all apps...\n")
+        call_command('migrate', no_input=True, stdout=output)
+        
+        return HttpResponse(f"Repair process COMPLETED.<br><pre>{output.getvalue()}</pre>")
     except Exception as e:
         import traceback
         return HttpResponse(f"Repair FATAL ERROR: {str(e)}<br><pre>{traceback.format_exc()}</pre>", status=500)

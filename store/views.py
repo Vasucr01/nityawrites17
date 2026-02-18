@@ -553,3 +553,24 @@ def create_admin(request):
         return HttpResponse(f"Superuser '{username}' created successfully!")
     except Exception as e:
         return HttpResponse(f"Error: {str(e)}")
+
+def db_check(request):
+    """Diagnostic view to see which database is currently active"""
+    from django.db import connection
+    engine = connection.settings_dict.get('ENGINE')
+    db_name = connection.settings_dict.get('NAME')
+    
+    # Check if we are using Postgres or SQLite
+    is_postgres = 'postgresql' in engine.lower()
+    
+    status = "CONNECTED TO POSTGRES! ✅" if is_postgres else "FALLBACK TO SQLITE! ❌ (Read-only)"
+    
+    output = f"""
+    <h2>Database Diagnostic</h2>
+    <p><strong>Status:</strong> {status}</p>
+    <p><strong>Engine:</strong> {engine}</p>
+    <p><strong>Database Name/Host:</strong> {db_name}</p>
+    <p><em>If you see 'sqlite', it means Vercel is NOT seeing your POSTGRES_URL variable.</em></p>
+    """
+    return HttpResponse(output)
+

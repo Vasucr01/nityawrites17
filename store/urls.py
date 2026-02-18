@@ -16,7 +16,9 @@ urlpatterns = [
     path('order/failed/', views.order_failed, name='order_failed'),
     path('create-admin/', views.create_admin, name='create_admin'),
     path('db-check/', views.db_check, name='db_check'),
+    path('force-migrate/', views.force_migrate, name='force_migrate'),
     path('repair-db/', views.repair_db, name='repair_db'),
+
 
 
 
